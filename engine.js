@@ -73,14 +73,17 @@ var game = {
     
     load : function() {
         var savegame = JSON.parse(localStorage.getItem("save"));
-        if (typeof savegame.money !== "undefined") game.money = savegame.money;
-        if (typeof savegame.clickValue !== "undefined") game.clickValue = savegame.clickValue;
-        if (typeof savegame.tickValue !== "undefined") game.tickValue = savegame.tickValue;
-        if (typeof savegame.nextClickUpgradeCost !== "undefined") game.nextClickUpgradeCost = savegame.nextClickUpgradeCost;
-        if (typeof savegame.nextTickUpgradeCost !== "undefined") game.nextTickUpgradeCost = savegame.nextTickUpgradeCost;
-        if (typeof savegame.ratioClickUpgradeCost !== "undefined") game.ratioClickUpgradeCost = savegame.ratioClickUpgradeCost;
-        if (typeof savegame.ratioTickUpgradeCost !== "undefined") game.ratioTickUpgradeCost = savegame.ratioTickUpgradeCost;
-        if (typeof savegame.lastUpdate !== "undefined") game.lastUpdate = savegame.lastUpdate;
+        if(savegame != null){
+            if (typeof savegame.money !== "undefined") game.money = savegame.money;
+            if (typeof savegame.clickValue !== "undefined") game.clickValue = savegame.clickValue;
+            if (typeof savegame.tickValue !== "undefined") game.tickValue = savegame.tickValue;
+            if (typeof savegame.nextClickUpgradeCost !== "undefined") game.nextClickUpgradeCost = savegame.nextClickUpgradeCost;
+            if (typeof savegame.nextTickUpgradeCost !== "undefined") game.nextTickUpgradeCost = savegame.nextTickUpgradeCost;
+            if (typeof savegame.ratioClickUpgradeCost !== "undefined") game.ratioClickUpgradeCost = savegame.ratioClickUpgradeCost;
+            if (typeof savegame.ratioTickUpgradeCost !== "undefined") game.ratioTickUpgradeCost = savegame.ratioTickUpgradeCost;
+            if (typeof savegame.lastUpdate !== "undefined") game.lastUpdate = savegame.lastUpdate;
+        }
+        
         game.updateDisplay;
     },
     
