@@ -1,8 +1,8 @@
-
-body {
-    background-color: cornsilk;
+body{
+  background-color: #cccc00;
 }
 
-#log {
-    background-color: aquamarine
+#title{
+  font-size: 50px;
+  text-align: center;
 }
