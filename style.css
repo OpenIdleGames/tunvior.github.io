@@ -6,3 +6,20 @@ body{
   font-size: 50px;
   text-align: center;
 }
+
+#list{
+  text-align: center;
+  font-size: 30px;
+}
+
+#list ul{
+  display: inline-table;
+}
+
+#list li{
+  disply: inline;
+}
+
+#donation{
+  text-align: center;
+}
