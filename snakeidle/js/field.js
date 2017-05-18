@@ -2,15 +2,30 @@ const MAX_DIM = 15;
 const DRAWING_UNIT = 20;
 
 class Field{
-  constructor(canvas){
+  constructor(){
     this.dimension = 3;
     this.fruitNumber = 1;
-    this.canvas = canvas;
+    this.fruitButton = null;
+    this.biggerButton = null;
+    this.canvas = null;
     this.grid = new Array(this.dimension);
     for(var i = 0; i < this.dimension; i++){
-      this.grid[i] = new Array();
+      this.grid[i] = new Array(this.dimension);
     }
     this.snake = [];
+  }
+
+  setUIElements(fruitButton, biggerButton, canvas){
+    this.fruitButton = fruitButton;
+    this.biggerButton = biggerButton;
+    this.canvas = canvas;
+    var field = this;
+    this.fruitButton.click(function(){
+      field.increaseFruits();
+    });
+    this.biggerButton.click(function(){
+      field.increaseDimension();
+    });
     this.initialize();
   }
 
@@ -55,9 +70,9 @@ class Field{
   }
 
   drawCanvas(){
-    var canvas = document.getElementById(this.canvas);
-    var ctx = canvas.getContext("2d");
+    var ctx = this.canvas[0].getContext("2d");
     ctx.clearRect(0, 0, MAX_DIM*DRAWING_UNIT, MAX_DIM*DRAWING_UNIT);
+    ctx.beginPath();
     var offset = (MAX_DIM - this.dimension) / 2;
     ctx.rect(offset*DRAWING_UNIT, offset*DRAWING_UNIT, this.dimension*DRAWING_UNIT, this.dimension*DRAWING_UNIT);
     ctx.stroke();
@@ -76,9 +91,23 @@ class Field{
   }
 
   increaseFruits(){
-    this.fruitNumber++;
-    this.generateFruits();
-    this.drawCanvas();
+    if(this.fruitNumber <= Math.ceil(this.dimension * this.dimension * 0.1)){
+      this.fruitNumber++;
+      this.initialize();
+      this.drawCanvas();
+    }
+  }
+
+  increaseDimension(){
+    if(this.dimension < MAX_DIM){
+      this.dimension = this.dimension + 2;
+      this.grid = new Array(this.dimension);
+      for(var i = 0; i < this.dimension; i++){
+        this.grid[i] = new Array(this.dimension);
+      }
+      this.initialize();
+      this.drawCanvas();
+    }
   }
 
 }
