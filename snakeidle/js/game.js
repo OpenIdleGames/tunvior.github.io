@@ -4,9 +4,12 @@ class Game{
     this.fruits = 0;
     this.tickDuration = 1000;
     this.fields = [];
-    this.fields.push(new Field());
+    this.fields.push(new Field(this));
+    this.fruitsSpan = document.getElementById("fruits");
+    this.tickDurationSpan = document.getElementById("tickDuration");
     this.drawGrid();
   }
+
 
   drawGrid(){
     $("#grid").empty();
@@ -48,23 +51,27 @@ class Game{
     for(i = 0; i < this.fields.length; i++){
       this.fields[i].drawCanvas();
     }
-
-    /*
-    for(i = 0; i < this.fields.length; i++){
-      var fields = this.fields;
-      $("#fruitButton"+i).click(function(){
-        var id = $(this).attr("id");
-        var i = id.charAt(id.length - 1);
-        fields[i].increaseFruits();
-
-      });
-    }*/
   }
 
-
-
   addField(){
-    this.fields.push(new Field('canvas' + this.fields.length));
+    this.fields.push(new Field(this));
     this.drawGrid();
+  }
+
+  addFruits(number){
+    this.fruits = this.fruits + number;
+    this.fruitsSpan.innerHTML = this.fruits;
+  }
+
+  cycle(){
+    for(var i = 0; i < this.fields.length; i++){
+      this.fields[i].cycle();
+    }
+  }
+
+  cycleNoGraphic(){
+    for(var i = 0; i < this.fields.length; i++){
+      this.fields[i].cycleNoGraphic();
+    }
   }
 }

@@ -2,7 +2,8 @@ const MAX_DIM = 15;
 const DRAWING_UNIT = 20;
 
 class Field{
-  constructor(){
+  constructor(game){
+    this.game = game;
     this.dimension = 3;
     this.fruitNumber = 1;
     this.fruitButton = null;
@@ -13,6 +14,7 @@ class Field{
       this.grid[i] = new Array(this.dimension);
     }
     this.snake = [];
+    this.direction = Math.floor(Math.random() * 4);
   }
 
   setUIElements(fruitButton, biggerButton, canvas){
@@ -32,6 +34,8 @@ class Field{
   initialize(){
     var half = Math.floor(this.dimension / 2);
     this.snake = [[half, half]];
+    this.clearGrid();
+    this.updateSnakeGrid();
     this.generateFruits();
   }
 
@@ -44,7 +48,6 @@ class Field{
   }
 
   updateSnakeGrid(){
-    this.clearGrid();
     for(var i = 0; i < this.snake.length; i++){
       var x = this.snake[i][0];
       var y = this.snake[i][1];
@@ -53,7 +56,6 @@ class Field{
   }
 
   generateFruits(){
-    this.updateSnakeGrid();
     for(var i = 0; i < this.fruitNumber; i++){
       this.spawnFruit();
     }
@@ -110,4 +112,106 @@ class Field{
     }
   }
 
+  checkCollision(x, y){
+    var cell = this.grid[x][y];
+
+  }
+
+  generateDirection(){
+    var offset = Math.floor(Math.random() * 3);
+    this.direction = this.mod((this.direction + offset - 1), 4);
+
+    console.log("Direzione: " + this.direction);
+  }
+
+  findDestination(){
+    var x, y;
+    switch (this.direction) {
+      case Direction.UP:
+        x = this.snake[0][0];
+        y = this.snake[0][1] - 1;
+        break;
+      case Direction.DOWN:
+        x = this.snake[0][0];
+        y = this.snake[0][1] + 1;
+        break;
+      case Direction.LEFT:
+        x = this.snake[0][0] - 1;
+        y = this.snake[0][1];
+        break;
+      case Direction.RIGHT:
+        x = this.snake[0][0] + 1;
+        y = this.snake[0][1];
+        break;
+    }
+    console.log("X: " + x + " Y: " + y);
+    return [x, y];
+  }
+
+  checkDestination(coordinates){
+    var x = coordinates[0];
+    var y = coordinates[1];
+    if( (x >= this.dimension) ||
+        (y >= this.dimension) ||
+        (x < 0) ||
+        (y < 0) ){
+      this.death();
+    }else{
+      if(this.grid[x][y] == State.SNAKE){
+        this.death();
+      }else{
+        if(this.grid[x][y] == State.FRUIT){
+          this.game.addFruits(this.snake.length);
+          this.moveSnake(coordinates, true);
+          this.spawnFruit();
+        }else{
+          this.moveSnake(coordinates, false);
+        }
+      }
+    }
+
+  }
+
+  death(){
+    console.log("morto");
+    this.initialize();
+  }
+
+  moveSnake(coordinates, fruitEaten){
+
+    if(fruitEaten){
+      this.grid[coordinates[0]][coordinates[1]] = State.SNAKE;
+      var newSnake = [coordinates];
+      for(var i = 0; i < this.snake.length; i++){
+        newSnake.push(this.snake[i]);
+      }
+      this.snake = newSnake;
+    }else{
+      var tail = this.snake[this.snake.length - 1];
+      this.grid[coordinates[0]][coordinates[1]] = State.SNAKE;
+      this.grid[tail[0]][tail[1]] = State.FREE;
+      var newSnake = [coordinates];
+      for(var i = 0; i < this.snake.length - 1; i++){
+        newSnake.push(this.snake[i]);
+      }
+      this.snake = newSnake;
+    }
+  }
+
+  cycle(){
+    this.generateDirection();
+    var coords = this.findDestination();
+    this.checkDestination(coords);
+    this.drawCanvas();
+  }
+
+  cycleNoGraphic(){
+    this.generateDirection();
+    var coords = this.findDestination();
+    this.checkDestination(coords);
+  }
+
+  mod(n, m) {
+    return ((n % m) + m) % m;
+  }
 }

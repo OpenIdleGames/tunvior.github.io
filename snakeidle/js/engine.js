@@ -4,4 +4,9 @@ $( document ).ready(function() {
     $( "#addField" ).click(function(){
         game.addField();
     });
+
+    setInterval(function(){
+        game.cycle();    
+     }, game.tickDuration);
+
 });
