@@ -2,12 +2,14 @@ const MAX_DIM = 15;
 const DRAWING_UNIT = 20;
 
 class Field{
-  constructor(game){
+  constructor(game, prog){
+    this.prog = prog;
     this.game = game;
     this.dimension = 3;
     this.fruitNumber = 1;
     this.fruitButton = null;
     this.biggerButton = null;
+    this.prestigeButton = null;
     this.canvas = null;
     this.grid = new Array(this.dimension);
     for(var i = 0; i < this.dimension; i++){
@@ -17,9 +19,10 @@ class Field{
     this.direction = Math.floor(Math.random() * 4);
   }
 
-  setUIElements(fruitButton, biggerButton, canvas){
+  setUIElements(fruitButton, biggerButton, prestigeButton, canvas){
     this.fruitButton = fruitButton;
     this.biggerButton = biggerButton;
+    this.prestigeButton = prestigeButton;
     this.canvas = canvas;
     var field = this;
     this.fruitButton.click(function(){
@@ -28,6 +31,11 @@ class Field{
     this.biggerButton.click(function(){
       field.increaseDimension();
     });
+    this.prestigeButton.hide();
+    var mfCost = this.calculateMoreFruitsCost();
+    var bfCost = this.calculateBiggerFieldCost();
+    this.fruitButton[0].innerHTML+= ": " + mfCost + " fruits";
+    this.biggerButton[0].innerHTML+= ": " + bfCost + " fruits";
     this.initialize();
   }
 
@@ -93,35 +101,45 @@ class Field{
   }
 
   increaseFruits(){
-    if(this.fruitNumber <= Math.ceil(this.dimension * this.dimension * 0.1)){
+    if(this.calculateMoreFruitsCost() <= this.game.fruits){
+      this.game.removeFruits(this.calculateMoreFruitsCost());
       this.fruitNumber++;
-      this.initialize();
-      this.drawCanvas();
-    }
-  }
-
-  increaseDimension(){
-    if(this.dimension < MAX_DIM){
-      this.dimension = this.dimension + 2;
-      this.grid = new Array(this.dimension);
-      for(var i = 0; i < this.dimension; i++){
-        this.grid[i] = new Array(this.dimension);
+      this.fruitButton[0].innerHTML= "More fruits: " + this.calculateMoreFruitsCost() + " fruits";
+      if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+        if(this.dimension < MAX_DIM){
+          this.fruitButton.prop("disabled", true);
+        }else{
+          this.fruitButton.hide();
+          this.biggerButton.hide();
+          this.prestigeButton.show();
+        }
       }
       this.initialize();
       this.drawCanvas();
     }
   }
 
-  checkCollision(x, y){
-    var cell = this.grid[x][y];
-
+  increaseDimension(){
+    if(this.calculateBiggerFieldCost() <= this.game.fruits){
+      this.game.removeFruits(this.calculateBiggerFieldCost());
+      this.dimension = this.dimension + 2;
+      this.grid = new Array(this.dimension);
+      for(var i = 0; i < this.dimension; i++){
+        this.grid[i] = new Array(this.dimension);
+      }
+      this.biggerButton[0].innerHTML= "Bigger field: " + this.calculateBiggerFieldCost() + " fruits";
+      if(this.dimension == MAX_DIM){
+        this.biggerButton.prop("disabled", true);
+      }
+      this.fruitButton.prop("disabled", false);
+      this.initialize();
+      this.drawCanvas();
+    }
   }
 
   generateDirection(){
     var offset = Math.floor(Math.random() * 3);
     this.direction = this.mod((this.direction + offset - 1), 4);
-
-    console.log("Direzione: " + this.direction);
   }
 
   findDestination(){
@@ -144,7 +162,6 @@ class Field{
         y = this.snake[0][1];
         break;
     }
-    console.log("X: " + x + " Y: " + y);
     return [x, y];
   }
 
@@ -173,7 +190,6 @@ class Field{
   }
 
   death(){
-    console.log("morto");
     this.initialize();
   }
 
@@ -213,5 +229,13 @@ class Field{
 
   mod(n, m) {
     return ((n % m) + m) % m;
+  }
+
+  calculateMoreFruitsCost(){
+    return Math.pow(10, this.prog) * Math.pow(2, this.fruitNumber - 1);
+  }
+
+  calculateBiggerFieldCost(){
+    return Math.pow(10, this.prog) * Math.pow(10, (this.dimension - 1) / 2 );
   }
 }
