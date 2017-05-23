@@ -31,6 +31,9 @@ class Field{
     this.biggerButton.click(function(){
       field.increaseDimension();
     });
+    this.prestigeButton.click(function(){
+      field.game.prestigeField(this.prog);
+    })
     this.prestigeButton.hide();
     var mfCost = this.calculateMoreFruitsCost();
     var bfCost = this.calculateBiggerFieldCost();
@@ -56,7 +59,14 @@ class Field{
   }
 
   updateSnakeGrid(){
-    for(var i = 0; i < this.snake.length; i++){
+    for(var i = 0; i < this.dimension; i++){
+      for(var j = 0; j < this.dimension; j++){
+        if(this.grid[i][j] == State.SNAKE){
+          this.grid[i][j] = State.FREE;
+        }
+      }
+    }
+    for(i = 0; i < this.snake.length; i++){
       var x = this.snake[i][0];
       var y = this.snake[i][1];
       this.grid[x][y] = State.SNAKE;
@@ -90,7 +100,10 @@ class Field{
       for(var j = 0; j < this.dimension; j++){
         if(this.grid[i][j] == State.FRUIT){
           ctx.fillStyle = 'red';
-          ctx.fillRect((offset+i)*DRAWING_UNIT, (offset+j)*DRAWING_UNIT, DRAWING_UNIT, DRAWING_UNIT);
+          ctx.beginPath();
+          ctx.arc((offset+i)*DRAWING_UNIT+DRAWING_UNIT/2, (offset+j)*DRAWING_UNIT+DRAWING_UNIT/2, DRAWING_UNIT/2, 0, 2 * Math.PI, false);
+          ctx.fill();
+          //ctx.fillRect((offset+i)*DRAWING_UNIT, (offset+j)*DRAWING_UNIT, DRAWING_UNIT, DRAWING_UNIT);
         }
         if(this.grid[i][j] == State.SNAKE){
           ctx.fillStyle = 'green';
@@ -196,35 +209,34 @@ class Field{
   moveSnake(coordinates, fruitEaten){
 
     if(fruitEaten){
-      this.grid[coordinates[0]][coordinates[1]] = State.SNAKE;
       var newSnake = [coordinates];
       for(var i = 0; i < this.snake.length; i++){
         newSnake.push(this.snake[i]);
       }
       this.snake = newSnake;
+      this.updateSnakeGrid();
     }else{
       var tail = this.snake[this.snake.length - 1];
-      this.grid[coordinates[0]][coordinates[1]] = State.SNAKE;
-      this.grid[tail[0]][tail[1]] = State.FREE;
       var newSnake = [coordinates];
       for(var i = 0; i < this.snake.length - 1; i++){
         newSnake.push(this.snake[i]);
       }
       this.snake = newSnake;
+      this.updateSnakeGrid();
     }
   }
 
   cycle(){
-    this.generateDirection();
     var coords = this.findDestination();
     this.checkDestination(coords);
     this.drawCanvas();
+    this.generateDirection();
   }
 
   cycleNoGraphic(){
-    this.generateDirection();
     var coords = this.findDestination();
     this.checkDestination(coords);
+    this.generateDirection();
   }
 
   mod(n, m) {

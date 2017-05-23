@@ -3,11 +3,12 @@ class Game{
   constructor(){
     this.fruits = 0;
     this.tickDuration = 1000;
-    this.multiplier = 1000000000000000000000;
+    this.multiplier = 1000000000000;
     this.fields = [];
     this.fields.push(new Field(this, this.fields.length));
     this.fruitsSpan = document.getElementById("fruits");
     this.tickDurationSpan = document.getElementById("tickDuration");
+    this.multiplierSpan = document.getElementById("multiplier");
     this.drawGrid();
   }
 
@@ -65,12 +66,21 @@ class Game{
 
   addFruits(number){
     this.fruits = this.fruits + (number * this.multiplier);
-    this.fruitsSpan.innerHTML = this.fruits;
+    this.fruitsSpan.innerHTML = numberformat.format(this.fruits);
   }
 
   removeFruits(number){
     this.fruits = this.fruits - number;
     this.fruitsSpan.innerHTML = this.fruits;
+  }
+
+  prestigeField(prog){
+    this.fields.splice(prog, 1);
+    this.multiplier *= 1.15;
+    this.tickDuration *= 0.85;
+    this.drawGrid();
+    this.multiplierSpan.innerHTML = this.multiplier;
+    this.tickDurationSpan.innerHTML = this.tickDuration;
   }
 
   cycle(){
