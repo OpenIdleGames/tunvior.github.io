@@ -61,7 +61,8 @@ class Field{
   updateSnakeGrid(){
     for(var i = 0; i < this.dimension; i++){
       for(var j = 0; j < this.dimension; j++){
-        if(this.grid[i][j] == State.SNAKE){
+        if( (this.grid[i][j] == State.SNAKE) ||
+            (this.grid[i][j] == State.HEAD) ){
           this.grid[i][j] = State.FREE;
         }
       }
@@ -69,7 +70,12 @@ class Field{
     for(i = 0; i < this.snake.length; i++){
       var x = this.snake[i][0];
       var y = this.snake[i][1];
-      this.grid[x][y] = State.SNAKE;
+      if(i === 0){
+          this.grid[x][y] = State.HEAD;
+      }else{
+          this.grid[x][y] = State.SNAKE;
+      }
+
     }
   }
 
@@ -109,6 +115,86 @@ class Field{
           ctx.fillStyle = 'green';
           ctx.fillRect((offset+i)*DRAWING_UNIT, (offset+j)*DRAWING_UNIT, DRAWING_UNIT, DRAWING_UNIT);
         }
+        if(this.grid[i][j] == State.HEAD){
+          ctx.fillStyle = 'green';
+          ctx.fillRect((offset+i)*DRAWING_UNIT, (offset+j)*DRAWING_UNIT, DRAWING_UNIT, DRAWING_UNIT);
+          ctx.beginPath();
+          ctx.fillStyle = 'yellow';
+          switch (this.direction) {
+            case Direction.UP:
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              break;
+            case Direction.DOWN:
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              break;
+            case Direction.LEFT:
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              break;
+            case Direction.RIGHT:
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              ctx.arc(
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                DRAWING_UNIT/10,
+                0, 2 * Math.PI, false
+              );
+              ctx.fill();
+              ctx.stroke();
+              break;
+          }
+        }
       }
     }
   }
@@ -117,7 +203,7 @@ class Field{
     if(this.calculateMoreFruitsCost() <= this.game.fruits){
       this.game.removeFruits(this.calculateMoreFruitsCost());
       this.fruitNumber++;
-      this.fruitButton[0].innerHTML= "More fruits: " + this.calculateMoreFruitsCost() + " fruits";
+      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost()) + " fruits";
       if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
         if(this.dimension < MAX_DIM){
           this.fruitButton.prop("disabled", true);
@@ -140,7 +226,7 @@ class Field{
       for(var i = 0; i < this.dimension; i++){
         this.grid[i] = new Array(this.dimension);
       }
-      this.biggerButton[0].innerHTML= "Bigger field: " + this.calculateBiggerFieldCost() + " fruits";
+      this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost()) + " fruits";
       if(this.dimension == MAX_DIM){
         this.biggerButton.prop("disabled", true);
       }
@@ -187,7 +273,8 @@ class Field{
         (y < 0) ){
       this.death();
     }else{
-      if(this.grid[x][y] == State.SNAKE){
+      if( (this.grid[x][y] == State.SNAKE)||
+          (this.grid[x][y] == State.HEAD)){
         this.death();
       }else{
         if(this.grid[x][y] == State.FRUIT){
@@ -229,8 +316,8 @@ class Field{
   cycle(){
     var coords = this.findDestination();
     this.checkDestination(coords);
-    this.drawCanvas();
     this.generateDirection();
+    this.drawCanvas();
   }
 
   cycleNoGraphic(){

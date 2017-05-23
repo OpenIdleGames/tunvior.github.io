@@ -3,7 +3,7 @@ class Game{
   constructor(){
     this.fruits = 0;
     this.tickDuration = 1000;
-    this.multiplier = 1000000000000;
+    this.multiplier = 1;
     this.fields = [];
     this.fields.push(new Field(this, this.fields.length));
     this.fruitsSpan = document.getElementById("fruits");
@@ -71,7 +71,7 @@ class Game{
 
   removeFruits(number){
     this.fruits = this.fruits - number;
-    this.fruitsSpan.innerHTML = this.fruits;
+    this.fruitsSpan.innerHTML = numberformat.format(this.fruits);
   }
 
   prestigeField(prog){
@@ -79,8 +79,8 @@ class Game{
     this.multiplier *= 1.15;
     this.tickDuration *= 0.85;
     this.drawGrid();
-    this.multiplierSpan.innerHTML = this.multiplier;
-    this.tickDurationSpan.innerHTML = this.tickDuration;
+    this.multiplierSpan.innerHTML = numberformat.format(this.multiplier);
+    this.tickDurationSpan.innerHTML = numberformat.format(this.tickDuration);
   }
 
   cycle(){
