@@ -32,7 +32,7 @@ class Field{
       field.increaseDimension();
     });
     this.prestigeButton.click(function(){
-      field.game.prestigeField(this.prog);
+      field.game.prestigeField(field.prog);
     })
     this.prestigeButton.hide();
     var mfCost = this.calculateMoreFruitsCost();
@@ -48,6 +48,13 @@ class Field{
     this.clearGrid();
     this.updateSnakeGrid();
     this.generateFruits();
+  }
+
+  recreateGrid(){
+    this.grid = new Array(this.dimension);
+    for(var i = 0; i < this.dimension; i++){
+      this.grid[i] = new Array(this.dimension);
+    }
   }
 
   clearGrid(){
@@ -118,10 +125,10 @@ class Field{
         if(this.grid[i][j] == State.HEAD){
           ctx.fillStyle = 'green';
           ctx.fillRect((offset+i)*DRAWING_UNIT, (offset+j)*DRAWING_UNIT, DRAWING_UNIT, DRAWING_UNIT);
-          ctx.beginPath();
           ctx.fillStyle = 'yellow';
           switch (this.direction) {
             case Direction.UP:
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
@@ -130,6 +137,7 @@ class Field{
               );
               ctx.fill();
               ctx.stroke();
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
@@ -140,6 +148,7 @@ class Field{
               ctx.stroke();
               break;
             case Direction.DOWN:
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
@@ -148,6 +157,7 @@ class Field{
               );
               ctx.fill();
               ctx.stroke();
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
@@ -158,6 +168,7 @@ class Field{
               ctx.stroke();
               break;
             case Direction.LEFT:
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
@@ -166,6 +177,7 @@ class Field{
               );
               ctx.fill();
               ctx.stroke();
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
@@ -176,6 +188,7 @@ class Field{
               ctx.stroke();
               break;
             case Direction.RIGHT:
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
@@ -184,6 +197,7 @@ class Field{
               );
               ctx.fill();
               ctx.stroke();
+              ctx.beginPath();
               ctx.arc(
                 (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
                 (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
@@ -203,7 +217,7 @@ class Field{
     if(this.calculateMoreFruitsCost() <= this.game.fruits){
       this.game.removeFruits(this.calculateMoreFruitsCost());
       this.fruitNumber++;
-      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost()) + " fruits";
+      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
       if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
         if(this.dimension < MAX_DIM){
           this.fruitButton.prop("disabled", true);
@@ -226,9 +240,11 @@ class Field{
       for(var i = 0; i < this.dimension; i++){
         this.grid[i] = new Array(this.dimension);
       }
-      this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost()) + " fruits";
       if(this.dimension == MAX_DIM){
+        this.biggerButton[0].innerHTML= "Bigger field: MAXED";
         this.biggerButton.prop("disabled", true);
+      }else{
+        this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits";
       }
       this.fruitButton.prop("disabled", false);
       this.initialize();
@@ -336,5 +352,10 @@ class Field{
 
   calculateBiggerFieldCost(){
     return Math.pow(10, this.prog) * Math.pow(10, (this.dimension - 1) / 2 );
+  }
+
+  updateButtons(){
+      this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits";
+      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
   }
 }

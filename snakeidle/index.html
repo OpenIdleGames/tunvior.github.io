@@ -65,6 +65,8 @@
 
         <div>
           <button id="addField">Add Field</button>
+          <button id="save">Save</button>
+          <button id="clearSave">Clear Save</button>
         </div>
 
       </div> <!-- end scoreboard -->
@@ -73,7 +75,7 @@
 
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" class="active">
-            <a href="#grid" aria-controls="grid" role="tab" data-toggle="tab">Snakes</a>
+            <a href="#snakes" aria-controls="snakes" role="tab" data-toggle="tab">Snakes</a>
           </li>
           <li role="presentation">
             <a href="#upgrades" aria-controls="upgrades" role="tab" data-toggle="tab">Upgrades</a>
@@ -84,14 +86,24 @@
         </ul>
 
         <div class="tab-content">
-          <div role="tabpanel" class="tab-pane active" id="grid">
+          <div role="tabpanel" class="tab-pane active" id="snakes">
+              <div class="row"  id="grid">
 
+              </div>
           </div>
           <div role="tabpanel" class="tab-pane" id="upgrades">
             UPGRADES
           </div>
           <div role="tabpanel" class="tab-pane" id="options">
-            OPTIONS
+            <h1>OPTIONS</h1>
+            <div>
+                Number notation:
+                <select id="notation">
+                  <option value="standard">Standard</option>
+                  <option value="scientific">Scientific</option>
+                  <option value="engineering">Engineering</option>
+                </select>
+            </div>
           </div>
         </div>
 
