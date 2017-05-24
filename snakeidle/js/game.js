@@ -121,6 +121,7 @@ class Game{
     this.fruitsSpan.innerHTML = numberformat.format(this.fruits,{format: notation});
     this.multiplierSpan.innerHTML = numberformat.format(this.multiplier, {format: notation});
     this.tickDurationSpan.innerHTML = numberformat.format(this.tickDuration, {format: notation});
+    $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
   }
 
 }
