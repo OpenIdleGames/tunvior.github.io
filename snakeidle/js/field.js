@@ -33,7 +33,7 @@ class Field{
     });
     this.prestigeButton.click(function(){
       field.game.prestigeField(field.prog);
-    })
+    });
     this.prestigeButton.hide();
     var mfCost = this.calculateMoreFruitsCost();
     var bfCost = this.calculateBiggerFieldCost();
@@ -277,7 +277,8 @@ class Field{
         y = this.snake[0][1];
         break;
     }
-    return [x, y];
+    //return [x, y];
+    this.checkDestination([x, y]);
   }
 
   checkDestination(coordinates){
@@ -287,11 +288,12 @@ class Field{
         (y >= this.dimension) ||
         (x < 0) ||
         (y < 0) ){
-      this.death();
+          this.generateDirection();
+          return this.findDestination();
     }else{
       if( (this.grid[x][y] == State.SNAKE)||
           (this.grid[x][y] == State.HEAD)){
-        this.death();
+          this.death();
       }else{
         if(this.grid[x][y] == State.FRUIT){
           this.game.addFruits(this.snake.length);
@@ -300,6 +302,7 @@ class Field{
         }else{
           this.moveSnake(coordinates, false);
         }
+        this.generateDirection();
       }
     }
 
@@ -329,17 +332,14 @@ class Field{
     }
   }
 
+
   cycle(){
-    var coords = this.findDestination();
-    this.checkDestination(coords);
-    this.generateDirection();
+    this.findDestination();
     this.drawCanvas();
   }
 
   cycleNoGraphic(){
-    var coords = this.findDestination();
-    this.checkDestination(coords);
-    this.generateDirection();
+    this.findDestination();
   }
 
   mod(n, m) {
