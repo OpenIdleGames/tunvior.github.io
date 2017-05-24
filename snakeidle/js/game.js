@@ -14,6 +14,7 @@ class Game{
     this.tickDurationSpan = document.getElementById("tickDuration");
     this.multiplierSpan = document.getElementById("multiplier");
     this.drawField(this.prog - 1);
+    $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
   }
 
   drawField(prog){
@@ -41,58 +42,18 @@ class Game{
     $("#field"+index).remove();
   }
 
-  /*
-  drawGrid(){
-
-    $("#grid").empty();
-    for(var i = 0; i < this.fields.length;){
-      var row = $("<div class=\"row\"></div>");
-      var col1 = $("<div class=\"col-md-6\"></div>");
-      var col2 = $("<div class=\"col-md-6\"></div>");
-
-      var fruitButton = $("<button class=\"btn btn-primary\" id=\"fruitButton" + i +  "\">More fruits</button>");
-      var biggerButton = $("<button class=\"btn btn-primary\" id=\"biggerButton" + i +  "\">Bigger field</button>");
-      var prestigeButton = $("<button class=\"btn btn-success\" id=\"prestigeButton" + i +  "\">PRESTIGE</button>");
-      var canvas = $("<canvas id=\"canvas" + i + "\" width=" + MAX_DIM*DRAWING_UNIT + " height=" + MAX_DIM*DRAWING_UNIT + "></canvas>");
-
-      col1.append(fruitButton);
-      col1.append(biggerButton);
-      col1.append(prestigeButton);
-      col1.append($("<br>"));
-      col1.append(canvas);
-      i++;
-      if(i <= this.fields.length - 1){
-        fruitButton = $("<button class=\"btn btn-primary\" id=\"fruitButton" + i +  "\">More fruits</button>");
-        biggerButton = $("<button class=\"btn btn-primary\" id=\"biggerButton" + i +  "\">Bigger field</button>");
-        prestigeButton = $("<button class=\"btn btn-success\" id=\"prestigeButton" + i +  "\">PRESTIGE</button>");
-        canvas = $("<canvas id=\"canvas" + i + "\" width=" + MAX_DIM*DRAWING_UNIT + " height=" + MAX_DIM*DRAWING_UNIT + "></canvas>");
-
-        col2.append(fruitButton);
-        col2.append(biggerButton);
-        col2.append(prestigeButton);
-        col2.append($("<br>"));
-        col2.append(canvas);
-
-        i++;
-      }
-      row.append(col1);
-      row.append(col2);
-      $("#grid").append(row);
-    }
-
-    for(i = 0; i < this.fields.length; i++){
-      this.fields[i].setUIElements($("#fruitButton"+i), $("#biggerButton"+i), $("#prestigeButton"+i), $("#canvas"+i));
-    }
-
-    for(i = 0; i < this.fields.length; i++){
-      this.fields[i].drawCanvas();
-    }
+  calculateNextFieldCost(){
+    return Math.pow(10, this.prog);
   }
-  */
+
   addField(){
-    this.fields.push(new Field(this, this.prog));
-    this.prog++;
-    this.drawField(this.prog - 1);
+    if(this.calculateNextFieldCost() <= this.fruits){
+      this.fruits -= this.calculateNextFieldCost();
+      this.fields.push(new Field(this, this.prog));
+      this.prog++;
+      this.drawField(this.prog - 1);
+      $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
+    }
   }
 
   addFruits(number){
@@ -153,11 +114,13 @@ class Game{
 
   clearSave(){
     localStorage.clear();
+    location.reload();
   }
 
   updateUI(){
-    this.fruitsSpan.innerHTML = this.fruits;
-    this.tickDurationSpan.innerHTML = this.tickDuration;
-    this.multiplierSpan.innerHTML = this.multiplier;
+    this.fruitsSpan.innerHTML = numberformat.format(this.fruits,{format: notation});
+    this.multiplierSpan.innerHTML = numberformat.format(this.multiplier, {format: notation});
+    this.tickDurationSpan.innerHTML = numberformat.format(this.tickDuration, {format: notation});
   }
+
 }

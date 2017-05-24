@@ -355,7 +355,22 @@ class Field{
   }
 
   updateButtons(){
+    if(this.dimension == MAX_DIM){
+      this.biggerButton[0].innerHTML= "Bigger field: MAXED";
+      this.biggerButton.prop("disabled", true);
+    }else{
       this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits";
-      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
+    }
+    this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
+    if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+      if(this.dimension < MAX_DIM){
+        this.fruitButton.prop("disabled", true);
+      }else{
+        this.fruitButton.hide();
+        this.biggerButton.hide();
+        this.prestigeButton.show();
+      }
+    }
+
   }
 }

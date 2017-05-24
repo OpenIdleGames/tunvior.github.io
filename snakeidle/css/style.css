@@ -13,6 +13,10 @@ h1 {
   padding-bottom: 10px;
 }
 
+#snakeHeader{
+  text-align: center; 
+}
+
 #grid{
   text-align: center;
 }

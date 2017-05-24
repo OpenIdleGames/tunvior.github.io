@@ -63,12 +63,6 @@
           </div>
         </div>
 
-        <div>
-          <button id="addField">Add Field</button>
-          <button id="save">Save</button>
-          <button id="clearSave">Clear Save</button>
-        </div>
-
       </div> <!-- end scoreboard -->
 
       <div>
@@ -87,6 +81,9 @@
 
         <div class="tab-content">
           <div role="tabpanel" class="tab-pane active" id="snakes">
+              <div id="snakeHeader">
+                <button class="btn btn-primary" id="addField">Add Field</button>
+              </div>
               <div class="row"  id="grid">
 
               </div>
@@ -96,6 +93,10 @@
           </div>
           <div role="tabpanel" class="tab-pane" id="options">
             <h1>OPTIONS</h1>
+            <div>
+              <button id="save">Save</button>
+              <button id="clearSave">Hard Reset</button>
+            </div>
             <div>
                 Number notation:
                 <select id="notation">
