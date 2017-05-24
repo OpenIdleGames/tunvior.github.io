@@ -21,6 +21,11 @@ $( document ).ready(function() {
           }
         }
         game.updateUI();
+        var savedNotation = JSON.parse(localStorage.getItem("notation"));
+        if((savedNotation !== null) && (typeof savedNotation !== "undefined")){
+            notation = savedNotation;
+            $("#notation").val(notation);
+        }
     }
     $( "#addField" ).click(function(){
         game.addField();
@@ -41,6 +46,7 @@ $( document ).ready(function() {
     });
     $("#notation").change(function(){
         notation = $("#notation option:selected").val();
+        localStorage.setItem("notation",JSON.stringify(notation));
     });
 
     setInterval(function(){
