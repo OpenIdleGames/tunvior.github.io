@@ -3,20 +3,22 @@ $( document ).ready(function() {
     var save = JSON.parse(localStorage.getItem("save"));
     var game = new Game();
     if (save !== null){
-        game.fruits = save.gameFruits;
-        game.tickDuration = save.tickDuration;
-        game.multiplier = save.multiplier;
-        game.prog = save.lastProg;
-        game.eraseField(0);
-        game.fields = [];
-        for(var i = 0; i < save.fields.length; i++){
-            game.fields.push(new Field(game, save.fields[i].prog));
-            game.drawField(save.fields[i].prog);
-            game.fields[i].dimension = save.fields[i].dimension;
-            game.fields[i].fruitNumber = save.fields[i].fruitNumber;
-            game.fields[i].recreateGrid();
-            game.fields[i].initialize();
-            game.fields[i].updateButtons();
+        if (typeof save.gameFruits !== "undefined")game.fruits = save.gameFruits;
+        if (typeof save.tickDuration !== "undefined")game.tickDuration = save.tickDuration;
+        if (typeof save.multiplier !== "undefined")game.multiplier = save.multiplier;
+        if (typeof save.lastProg !== "undefined")game.prog = save.lastProg;
+        if (typeof save.fields !== "undefined"){
+          game.eraseField(0);
+          game.fields = [];
+          for(var i = 0; i < save.fields.length; i++){
+              game.fields.push(new Field(game, save.fields[i].prog));
+              game.drawField(save.fields[i].prog);
+              game.fields[i].dimension = save.fields[i].dimension;
+              game.fields[i].fruitNumber = save.fields[i].fruitNumber;
+              game.fields[i].recreateGrid();
+              game.fields[i].initialize();
+              game.fields[i].updateButtons();
+          }
         }
         game.updateUI();
     }
