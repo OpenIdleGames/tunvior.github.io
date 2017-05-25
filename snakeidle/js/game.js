@@ -52,6 +52,7 @@ class Game{
       this.fields.push(new Field(this, this.prog));
       this.prog++;
       this.drawField(this.prog - 1);
+      this.fruitsSpan.innerHTML = numberformat.format(this.fruits,{format: notation});
       $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
     }
   }
