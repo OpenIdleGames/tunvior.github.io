@@ -6,6 +6,7 @@ $( document ).ready(function() {
         if (typeof save.gameFruits !== "undefined")game.fruits = save.gameFruits;
         if (typeof save.tickDuration !== "undefined")game.tickDuration = save.tickDuration;
         if (typeof save.multiplier !== "undefined")game.multiplier = save.multiplier;
+        if (typeof save.snakeLengthBonus !== "undefined")game.snakeLengthBonus = save.snakeLengthBonus;
         if (typeof save.lastProg !== "undefined")game.prog = save.lastProg;
         if (typeof save.fields !== "undefined"){
           game.eraseField(0);
@@ -18,6 +19,23 @@ $( document ).ready(function() {
               game.fields[i].recreateGrid();
               game.fields[i].initialize();
               game.fields[i].updateButtons();
+          }
+        }
+        if (typeof save.upgrades !== "undefined"){
+          game.eraseUpgrades();
+          game.upgrades = [];
+          for(var i = 0; i < save.upgrades.length; i++){
+            game.upgrades.push(new Upgrade(
+              game,
+              game.upgrades.length,
+              save.upgrades[i].name,
+              save.upgrades[i].description,
+              save.upgrades[i].effect,
+              save.upgrades[i].startingPrice,
+              save.upgrades[i].ratio
+            ));
+            game.upgrades[i].level = save.upgrades[i].level;
+            game.drawUpgrade(game.upgrades[i], i);
           }
         }
         game.updateUI();

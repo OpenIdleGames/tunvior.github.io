@@ -18,6 +18,7 @@
     <script src="./js/state.js"></script>
     <script src="./js/direction.js"></script>
     <script src="./js/field.js"></script>
+    <script src="./js/upgrade.js"></script>
     <script src="./js/game.js"></script>
     <script src="./js/engine.js"></script>
   </head>
@@ -50,7 +51,7 @@
           </div>
       </div> <!-- end navbar -->
 
-      <div id="scoreboard"> <!-- scoreboard and options menu -->
+      <div id="scoreboard" > <!-- scoreboard and options menu -->
         <div class="row">
           <div class="col-md-4">
               Fruits: <span id="fruits">0</span>
@@ -89,7 +90,10 @@
               </div>
           </div>
           <div role="tabpanel" class="tab-pane" id="upgrades">
-            UPGRADES
+            <h1>UPGRADES</h1>
+            <div class="row" id="upgradeList">
+
+            </div>
           </div>
           <div role="tabpanel" class="tab-pane" id="options">
             <h1>OPTIONS</h1>

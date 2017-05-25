@@ -6,6 +6,7 @@ class Game{
     this.fruits = 0;
     this.tickDuration = 1000;
     this.multiplier = 1;
+    this.snakeLengthBonus = 0;
     this.prog = 0;
     this.fields = [];
     this.fields.push(new Field(this, this.prog));
@@ -15,7 +16,30 @@ class Game{
     this.multiplierSpan = document.getElementById("multiplier");
     this.drawField(this.prog - 1);
     $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
+    this.upgrades = [];
+    this.upgrades.push(new Upgrade(
+      this,
+      this.upgrades.length,
+      "Fruit value",
+      "Double the value of fruits",
+      "this.game.multiplier = this.game.multiplier * 2",
+      1000,
+      10
+    ));
+    this.upgrades.push(new Upgrade(
+      this,
+      this.upgrades.length,
+      "Snake length bonus",
+      "Increase the bonus from snake length",
+      "this.game.snakeLengthBonus = this.game.snakeLengthBonus + 1",
+      100,
+      100
+    ));
+    for(var i = 0; i < this.upgrades.length; i++){
+      this.drawUpgrade(this.upgrades[i], i);
+    }
   }
+
 
   drawField(prog){
     var row = $("#grid");
@@ -38,8 +62,38 @@ class Game{
     this.fields[this.fields.length - 1].drawCanvas();
   }
 
+  drawUpgrade(upgrade, prog){
+    var row = $("#upgradeList");
+    var col = $("<div class=\"col-md-6\" id=\"upgrade" + prog + "\"></div>");
+
+    var nameSpan = $("<h3 id=\"name" + prog +"\"></h3>");
+    var costSpan = $("<span id=\"cost" + prog +"\"></span>");
+    var effectPar = $("<p id=\"effect" + prog +"\"></p>");
+    var buyButton = $("<button class=\"btn btn-primary\" id=\"buyButton" + prog +  "\">Buy</button>");
+
+    col.append(nameSpan);
+    col.append($("<br>"));
+    col.append(effectPar);
+    col.append($("<br>"));
+    col.append(costSpan);
+    col.append($("<br>"));
+    col.append(buyButton);
+    row.append(col);
+
+    $("#buyButton"+prog).click(function(){
+      upgrade.levelUp();
+    });
+
+    upgrade.setUIElements();
+    upgrade.updateUI();
+  }
+
   eraseField(index){
     $("#field"+index).remove();
+  }
+
+  eraseUpgrades(){
+    $("#upgradeList").empty();
   }
 
   calculateNextFieldCost(){
@@ -57,8 +111,9 @@ class Game{
     }
   }
 
-  addFruits(number){
-    this.fruits = this.fruits + (number * this.multiplier);
+  addFruits(snakeLength){
+    var value = (snakeLength - 1) * this.snakeLengthBonus;
+    this.fruits = this.fruits + ((1 + value) * this.multiplier);
     this.fruitsSpan.innerHTML = numberformat.format(this.fruits, {format: notation});
   }
 
@@ -75,7 +130,7 @@ class Game{
       }
     }
     this.fields.splice(index, 1);
-    this.multiplier *= 1.15;
+    this.multiplier *= 2;
     this.tickDuration *= 0.85;
     this.eraseField(prog);
     this.multiplierSpan.innerHTML = numberformat.format(this.multiplier, {format: notation});
@@ -103,12 +158,25 @@ class Game{
         fruitNumber: this.fields[i].fruitNumber,
       });
     }
+    var upgradesArray = [];
+    for(var i = 0; i < this.upgrades.length; i++){
+      upgradesArray.push({
+        name: this.upgrades[i].name,
+        description: this.upgrades[i].description,
+        effect: this.upgrades[i].effect,
+        startingPrice: this.upgrades[i].startingPrice,
+        ratio: this.upgrades[i].ratio,
+        level: this.upgrades[i].level,
+      });
+    }
     var save = {
         gameFruits: this.fruits,
         tickDuration: this.tickDuration,
         multiplier: this.multiplier,
+        snakeLengthBonus: this.snakeLengthBonus,
         lastProg: this.prog,
         fields: fieldsArray,
+        upgrades: upgradesArray,
     };
     localStorage.setItem("save",JSON.stringify(save));
   }

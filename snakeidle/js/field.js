@@ -37,8 +37,8 @@ class Field{
     this.prestigeButton.hide();
     var mfCost = this.calculateMoreFruitsCost();
     var bfCost = this.calculateBiggerFieldCost();
-    this.fruitButton[0].innerHTML+= ": " + mfCost + " fruits";
-    this.biggerButton[0].innerHTML+= ": " + bfCost + " fruits";
+    this.fruitButton[0].innerHTML+= ": " + numberformat.format(mfCost, {format: notation}) + " fruits";
+    this.biggerButton[0].innerHTML+= ": " + numberformat.format(bfCost, {format: notation}) + " fruits";
     this.initialize();
   }
 
