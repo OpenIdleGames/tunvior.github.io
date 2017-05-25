@@ -66,10 +66,30 @@ $( document ).ready(function() {
         notation = $("#notation option:selected").val();
         localStorage.setItem("notation",JSON.stringify(notation));
     });
-
+    /*
     setInterval(function(){
         game.cycle();
      }, game.tickDuration);
+     */
+     var now, dt, last = Date.now();
+     function cycle(){
+         now = Date.now();
+         dt = (now - last);
+         var ticks = Math.floor(dt / game.tickDuration);
+         var i = ticks;
+         while(i > 0){
+            if(ticks > 1){
+                game.cycleNoGraphic();
+            }else{
+                game.cycle();
+            }
+            i--;
+         }
+         last = now - dt % game.tickDuration;
+         requestAnimationFrame(cycle);
+     }
+     requestAnimationFrame(cycle);
+
 
      setInterval(function(){
          game.save();

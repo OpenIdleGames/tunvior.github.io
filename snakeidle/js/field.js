@@ -19,11 +19,11 @@ class Field{
     this.direction = Math.floor(Math.random() * 4);
   }
 
-  setUIElements(fruitButton, biggerButton, prestigeButton, canvas){
-    this.fruitButton = fruitButton;
-    this.biggerButton = biggerButton;
-    this.prestigeButton = prestigeButton;
-    this.canvas = canvas;
+  setUIElements(){
+    this.fruitButton = $("#fruitButton" + this.prog);
+    this.biggerButton = $("#biggerButton" + this.prog);
+    this.prestigeButton = $("#prestigeButton" + this.prog);
+    this.canvas = $("#canvas" + this.prog);
     var field = this;
     this.fruitButton.click(function(){
       field.increaseFruits();
@@ -37,10 +37,12 @@ class Field{
     this.prestigeButton.hide();
     var mfCost = this.calculateMoreFruitsCost();
     var bfCost = this.calculateBiggerFieldCost();
-    this.fruitButton[0].innerHTML+= ": " + numberformat.format(mfCost, {format: notation}) + " fruits";
-    this.biggerButton[0].innerHTML+= ": " + numberformat.format(bfCost, {format: notation}) + " fruits";
+    this.fruitButton.html("More fruits: " + numberformat.format(mfCost, {format: notation}) + " fruits");
+    this.biggerButton.html( "Bigger field: " + numberformat.format(bfCost, {format: notation}) + " fruits");
     this.initialize();
   }
+
+
 
   initialize(){
     var half = Math.floor(this.dimension / 2);
@@ -226,7 +228,7 @@ class Field{
     if(this.calculateMoreFruitsCost() <= this.game.fruits){
       this.game.removeFruits(this.calculateMoreFruitsCost());
       this.fruitNumber++;
-      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
+      this.fruitButton.html("More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits");
       if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
         if(this.dimension < MAX_DIM){
           this.fruitButton.html("More fruits: Need bigger field");
@@ -251,12 +253,12 @@ class Field{
         this.grid[i] = new Array(this.dimension);
       }
       if(this.dimension == MAX_DIM){
-        this.biggerButton[0].innerHTML= "Bigger field: MAXED";
+        this.biggerButton.html("Bigger field: MAXED");
         this.biggerButton.prop("disabled", true);
       }else{
-        this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits";
+        this.biggerButton.html("Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits");
       }
-      this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
+      this.fruitButton.html("More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits");
       this.fruitButton.prop("disabled", false);
       this.initialize();
       this.drawCanvas();
@@ -453,16 +455,16 @@ class Field{
 
   updateButtons(){
     if(this.dimension == MAX_DIM){
-      this.biggerButton[0].innerHTML= "Bigger field: MAXED";
+      this.biggerButton.html("Bigger field: MAXED");
       this.biggerButton.prop("disabled", true);
     }else{
-      this.biggerButton[0].innerHTML= "Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits";
+      this.biggerButton.html("Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits");
     }
-    this.fruitButton[0].innerHTML= "More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits";
+    this.fruitButton.html("More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits");
     if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
       if(this.dimension < MAX_DIM){
         this.fruitButton.prop("disabled", true);
-        this.fruitButton[0].innerHTML="More fruits: Need bigger field";
+        this.fruitButton.html("More fruits: Need bigger field");
       }else{
         this.fruitButton.hide();
         this.biggerButton.hide();

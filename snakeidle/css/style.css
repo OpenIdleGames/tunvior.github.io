@@ -14,7 +14,7 @@ h1 {
 }
 
 #snakeHeader{
-  text-align: center; 
+  text-align: center;
 }
 
 #grid{
@@ -30,4 +30,10 @@ h1 {
 
 .nav-tabs, .nav-pills {
     text-align:center;
+}
+
+.fruitNav{
+  padding-top: 15px;
+  font-size: 25px;
+  color: white;
 }

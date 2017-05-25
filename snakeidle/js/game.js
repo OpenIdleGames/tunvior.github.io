@@ -11,9 +11,10 @@ class Game{
     this.fields = [];
     this.fields.push(new Field(this, this.prog));
     this.prog++;
-    this.fruitsSpan = document.getElementById("fruits");
-    this.tickDurationSpan = document.getElementById("tickDuration");
-    this.multiplierSpan = document.getElementById("multiplier");
+    this.fruitsSpan = $("#fruits");
+    this.tickDurationSpan = $("#tickDuration");
+    this.multiplierSpan = $("#multiplier");
+    this.snakeLengthBonusSpan = $("#snakeLengthBonus");
     this.drawField(this.prog - 1);
     $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
     this.upgrades = [];
@@ -58,7 +59,7 @@ class Game{
     col.append($("<br>"));
     col.append(canvas);
     row.append(col);
-    this.fields[this.fields.length - 1].setUIElements($("#fruitButton"+i), $("#biggerButton"+i), $("#prestigeButton"+i), $("#canvas"+i));
+    this.fields[this.fields.length - 1].setUIElements();
     this.fields[this.fields.length - 1].drawCanvas();
   }
 
@@ -106,7 +107,7 @@ class Game{
       this.fields.push(new Field(this, this.prog));
       this.prog++;
       this.drawField(this.prog - 1);
-      this.fruitsSpan.innerHTML = numberformat.format(this.fruits,{format: notation});
+      this.fruitsSpan.html(numberformat.format(this.fruits,{format: notation}));
       $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
     }
   }
@@ -114,12 +115,12 @@ class Game{
   addFruits(snakeLength){
     var value = (snakeLength - 1) * this.snakeLengthBonus;
     this.fruits = this.fruits + ((1 + value) * this.multiplier);
-    this.fruitsSpan.innerHTML = numberformat.format(this.fruits, {format: notation});
+    this.fruitsSpan.html(numberformat.format(this.fruits, {format: notation}));
   }
 
   removeFruits(number){
     this.fruits = this.fruits - number;
-    this.fruitsSpan.innerHTML = numberformat.format(this.fruits, {format: notation});
+    this.fruitsSpan.html(numberformat.format(this.fruits, {format: notation}));
   }
 
   prestigeField(prog){
@@ -133,8 +134,8 @@ class Game{
     this.multiplier *= 2;
     this.tickDuration *= 0.85;
     this.eraseField(prog);
-    this.multiplierSpan.innerHTML = numberformat.format(this.multiplier, {format: notation});
-    this.tickDurationSpan.innerHTML = numberformat.format(this.tickDuration, {format: notation});
+    this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
+    this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
   }
 
   cycle(){
@@ -187,9 +188,10 @@ class Game{
   }
 
   updateUI(){
-    this.fruitsSpan.innerHTML = numberformat.format(this.fruits,{format: notation});
-    this.multiplierSpan.innerHTML = numberformat.format(this.multiplier, {format: notation});
-    this.tickDurationSpan.innerHTML = numberformat.format(this.tickDuration, {format: notation});
+    this.fruitsSpan.html(numberformat.format(this.fruits,{format: notation}));
+    this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
+    this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
+    this.snakeLengthBonusSpan.html(numberformat.format(this.snakeLengthBonus, {format: notation}));
     $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
   }
 
