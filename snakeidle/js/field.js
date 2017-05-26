@@ -150,8 +150,8 @@ class Field{
               ctx.stroke();
               ctx.beginPath();
               ctx.arc(
-                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
-                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
                 DRAWING_UNIT/10,
                 0, 2 * Math.PI, false
               );
@@ -161,8 +161,8 @@ class Field{
             case Direction.DOWN:
               ctx.beginPath();
               ctx.arc(
-                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
-                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
                 DRAWING_UNIT/10,
                 0, 2 * Math.PI, false
               );
@@ -190,8 +190,8 @@ class Field{
               ctx.stroke();
               ctx.beginPath();
               ctx.arc(
-                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
-                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
                 DRAWING_UNIT/10,
                 0, 2 * Math.PI, false
               );
@@ -201,8 +201,8 @@ class Field{
             case Direction.RIGHT:
               ctx.beginPath();
               ctx.arc(
-                (offset+i)*DRAWING_UNIT+DRAWING_UNIT*3/4,
-                (offset+j)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+i)*DRAWING_UNIT+DRAWING_UNIT/4,
+                (offset+j)*DRAWING_UNIT+DRAWING_UNIT*3/4,
                 DRAWING_UNIT/10,
                 0, 2 * Math.PI, false
               );
