@@ -2,9 +2,10 @@ const MAX_DIM = 15;
 const DRAWING_UNIT = 20;
 
 class Field{
-  constructor(game, prog){
+  constructor(game, prog, buttonsHandler){
     this.prog = prog;
     this.game = game;
+    this.buttonsHandler = buttonsHandler;
     this.dimension = 3;
     this.fruitNumber = 1;
     this.fruitButton = null;
@@ -39,6 +40,37 @@ class Field{
     var bfCost = this.calculateBiggerFieldCost();
     this.fruitButton.html("More fruits: " + numberformat.format(mfCost, {format: notation}) + " fruits");
     this.biggerButton.html( "Bigger field: " + numberformat.format(bfCost, {format: notation}) + " fruits");
+
+    if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+      if(this.dimension < MAX_DIM){
+        this.fruitButton.html("More fruits: Need bigger field");
+        this.fruitButton.prop("disabled", true);
+      }else{
+        this.fruitButton.hide();
+        this.biggerButton.hide();
+        this.prestigeButton.show();
+      }
+    }else{
+      if(mfCost <= this.game.fruits){
+        this.buttonsHandler.addEnabledButton(this.fruitButton, mfCost);
+      }else{
+        this.fruitButton.prop("disabled", true);
+        this.buttonsHandler.addDisabledButton(this.fruitButton, mfCost);
+      }
+    }
+
+    if(this.dimension == MAX_DIM){
+      this.biggerButton.html("Bigger field: MAXED");
+      this.biggerButton.prop("disabled", true);
+    }else{
+      if(bfCost <= this.game.fruits){
+        this.buttonsHandler.addEnabledButton(this.biggerButton, bfCost);
+      }else{
+        this.biggerButton.prop("disabled", true);
+        this.buttonsHandler.addDisabledButton(this.biggerButton, bfCost);
+      }
+    }
+
     this.initialize();
   }
 
@@ -225,10 +257,13 @@ class Field{
   }
 
   increaseFruits(){
-    if(this.calculateMoreFruitsCost() <= this.game.fruits){
-      this.game.removeFruits(this.calculateMoreFruitsCost());
+    var mfCost = this.calculateMoreFruitsCost();
+    if(mfCost <= this.game.fruits){
+      this.buttonsHandler.removeEnabledButton(this.fruitButton);
+      this.game.removeFruits(mfCost);
       this.fruitNumber++;
-      this.fruitButton.html("More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits");
+      mfCost = this.calculateMoreFruitsCost();
+      this.fruitButton.html("More fruits: " + numberformat.format(mfCost, {format: notation}) + " fruits");
       if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
         if(this.dimension < MAX_DIM){
           this.fruitButton.html("More fruits: Need bigger field");
@@ -238,6 +273,13 @@ class Field{
           this.biggerButton.hide();
           this.prestigeButton.show();
         }
+      }else{
+        if(mfCost <= this.game.fruits){
+          this.buttonsHandler.addEnabledButton(this.fruitButton, mfCost);
+        }else{
+          this.fruitButton.prop("disabled", true);
+          this.buttonsHandler.addDisabledButton(this.fruitButton, mfCost);
+        }
       }
       this.initialize();
       this.drawCanvas();
@@ -245,9 +287,11 @@ class Field{
   }
 
   increaseDimension(){
-    if(this.calculateBiggerFieldCost() <= this.game.fruits){
-      this.game.removeFruits(this.calculateBiggerFieldCost());
+    var bfCost = this.calculateBiggerFieldCost();
+    if(bfCost <= this.game.fruits){
+      this.game.removeFruits(bfCost);
       this.dimension = this.dimension + 2;
+      bfCost = this.calculateBiggerFieldCost();
       this.grid = new Array(this.dimension);
       for(var i = 0; i < this.dimension; i++){
         this.grid[i] = new Array(this.dimension);
@@ -256,10 +300,23 @@ class Field{
         this.biggerButton.html("Bigger field: MAXED");
         this.biggerButton.prop("disabled", true);
       }else{
-        this.biggerButton.html("Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits");
+        this.biggerButton.html("Bigger field: " + numberformat.format(bfCost, {format: notation}) + " fruits");
+        if(bfCost <= this.game.fruits){
+          this.buttonsHandler.addEnabledButton(this.biggerButton, bfCost);
+        }else{
+          this.biggerButton.prop("disabled", true);
+          this.buttonsHandler.addDisabledButton(this.biggerButton, bfCost);
+        }
       }
-      this.fruitButton.html("More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits");
+      var mfCost = this.calculateMoreFruitsCost();
+      this.fruitButton.html("More fruits: " + numberformat.format(mfCost, {format: notation}) + " fruits");
       this.fruitButton.prop("disabled", false);
+      if(mfCost <= this.game.fruits){
+        this.buttonsHandler.addEnabledButton(this.fruitButton, mfCost);
+      }else{
+        this.fruitButton.prop("disabled", true);
+        this.buttonsHandler.addDisabledButton(this.fruitButton, mfCost);
+      }
       this.initialize();
       this.drawCanvas();
     }

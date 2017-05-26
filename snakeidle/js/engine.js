@@ -1,5 +1,10 @@
 
 $( document ).ready(function() {
+    var savedNotation = JSON.parse(localStorage.getItem("notation"));
+    if((savedNotation !== null) && (typeof savedNotation !== "undefined")){
+        notation = savedNotation;
+        $("#notation").val(notation);
+    }
     var save = JSON.parse(localStorage.getItem("save"));
     var game = new Game();
     if (save !== null){
@@ -12,14 +17,15 @@ $( document ).ready(function() {
           game.eraseField(0);
           game.fields = [];
           for(var i = 0; i < save.fields.length; i++){
-              game.fields.push(new Field(game, save.fields[i].prog));
-              game.drawField(save.fields[i].prog);
+              game.fields.push(new Field(game, save.fields[i].prog, game.buttonsHandler));
               game.fields[i].dimension = save.fields[i].dimension;
               game.fields[i].fruitNumber = save.fields[i].fruitNumber;
               game.fields[i].recreateGrid();
               game.fields[i].initialize();
+              game.drawField(save.fields[i].prog);
               game.fields[i].updateButtons();
           }
+          game.updateFieldButton();
         }
         if (typeof save.upgrades !== "undefined"){
           game.eraseUpgrades();
@@ -39,11 +45,6 @@ $( document ).ready(function() {
           }
         }
         game.updateUI();
-        var savedNotation = JSON.parse(localStorage.getItem("notation"));
-        if((savedNotation !== null) && (typeof savedNotation !== "undefined")){
-            notation = savedNotation;
-            $("#notation").val(notation);
-        }
     }
     $( "#addField" ).click(function(){
         game.addField();

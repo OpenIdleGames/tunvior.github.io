@@ -3,20 +3,28 @@ var notation = 'standard';
 class Game{
 
   constructor(){
+    this.buttonsHandler = new ButtonsHandler();
     this.fruits = 0;
     this.tickDuration = 1000;
     this.multiplier = 1;
     this.snakeLengthBonus = 0;
     this.prog = 0;
     this.fields = [];
-    this.fields.push(new Field(this, this.prog));
+    this.fields.push(new Field(this, this.prog, this.buttonsHandler));
     this.prog++;
     this.fruitsSpan = $("#fruits");
     this.tickDurationSpan = $("#tickDuration");
     this.multiplierSpan = $("#multiplier");
     this.snakeLengthBonusSpan = $("#snakeLengthBonus");
     this.drawField(this.prog - 1);
-    $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
+    var nextFieldCost = this.calculateNextFieldCost();
+    $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
+    if( nextFieldCost <= this.fruits){
+      this.buttonsHandler.addEnabledButton($("#addField"), nextFieldCost);
+    }else{
+      $("#addField").prop("disabled", true);
+      this.buttonsHandler.addDisabledButton($("#addField"), nextFieldCost);
+    }
     this.upgrades = [];
     this.upgrades.push(new Upgrade(
       this,
@@ -41,6 +49,18 @@ class Game{
     }
   }
 
+  updateFieldButton(){
+    this.buttonsHandler.deleteButton($("#addField"));
+    $("#addField").prop("disabled", false);
+    var nextFieldCost = this.calculateNextFieldCost();
+    $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
+    if( nextFieldCost <= this.fruits){
+      this.buttonsHandler.addEnabledButton($("#addField"), nextFieldCost);
+    }else{
+      $("#addField").prop("disabled", true);
+      this.buttonsHandler.addDisabledButton($("#addField"), nextFieldCost);
+    }
+  }
 
   drawField(prog){
     var row = $("#grid");
@@ -90,6 +110,8 @@ class Game{
   }
 
   eraseField(index){
+    this.buttonsHandler.deleteButton(this.fields[index].fruitButton);
+    this.buttonsHandler.deleteButton(this.fields[index].biggerButton);
     $("#field"+index).remove();
   }
 
@@ -102,25 +124,39 @@ class Game{
   }
 
   addField(){
-    if(this.calculateNextFieldCost() <= this.fruits){
+    var nextFieldCost = this.calculateNextFieldCost();
+    if( nextFieldCost <= this.fruits){
+      this.buttonsHandler.removeEnabledButton($("#addField"));
       this.fruits -= this.calculateNextFieldCost();
-      this.fields.push(new Field(this, this.prog));
+      this.buttonsHandler.fruitDown(this.fruits);
+      this.fields.push(new Field(this, this.prog, this.buttonsHandler));
       this.prog++;
       this.drawField(this.prog - 1);
       this.fruitsSpan.html(numberformat.format(this.fruits,{format: notation}));
-      $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
+      nextFieldCost = this.calculateNextFieldCost();
+      $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
+      if( nextFieldCost <= this.fruits){
+        this.buttonsHandler.addEnabledButton($("#addField"), nextFieldCost);
+      }else{
+        $("#addField").prop("disabled", true);
+        this.buttonsHandler.addDisabledButton($("#addField"), nextFieldCost);
+      }
     }
   }
+
+
 
   addFruits(snakeLength){
     var value = (snakeLength - 1) * this.snakeLengthBonus;
     this.fruits = this.fruits + ((1 + value) * this.multiplier);
     this.fruitsSpan.html(numberformat.format(this.fruits, {format: notation}));
+    this.buttonsHandler.fruitUp(this.fruits);
   }
 
   removeFruits(number){
     this.fruits = this.fruits - number;
     this.fruitsSpan.html(numberformat.format(this.fruits, {format: notation}));
+    this.buttonsHandler.fruitDown(this.fruits);
   }
 
   prestigeField(prog){
@@ -130,6 +166,8 @@ class Game{
         index = i;
       }
     }
+    this.buttonsHandler.deleteButton(this.fields[i].fruitButton);
+    this.buttonsHandler.deleteButton(this.fields[i].biggerButton);
     this.fields.splice(index, 1);
     this.multiplier *= 2;
     this.tickDuration *= 0.85;
@@ -194,7 +232,8 @@ class Game{
     this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
     this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
     this.snakeLengthBonusSpan.html(numberformat.format(this.snakeLengthBonus, {format: notation}));
-    $("#addField").html("Add field: " + numberformat.format(this.calculateNextFieldCost(), {format: notation}) + " fruits");
+    var nextFieldCost = this.calculateNextFieldCost();
+    $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
   }
 
 }
