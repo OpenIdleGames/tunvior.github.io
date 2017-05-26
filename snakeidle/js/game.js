@@ -6,7 +6,7 @@ class Game{
     this.buttonsHandler = new ButtonsHandler();
     this.fruits = 0;
     this.tickDuration = 1000;
-    this.multiplier = 1000000000;
+    this.multiplier = 1;
     this.snakeLengthBonus = 0;
     this.prog = 0;
     this.fields = [];
