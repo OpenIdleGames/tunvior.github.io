@@ -281,7 +281,8 @@ class Field{
           this.buttonsHandler.addDisabledButton(this.fruitButton, mfCost);
         }
       }
-      this.initialize();
+      //this.initialize();
+      this.spawnFruit();
       this.drawCanvas();
     }
   }
@@ -292,10 +293,6 @@ class Field{
       this.game.removeFruits(bfCost);
       this.dimension = this.dimension + 2;
       bfCost = this.calculateBiggerFieldCost();
-      this.grid = new Array(this.dimension);
-      for(var i = 0; i < this.dimension; i++){
-        this.grid[i] = new Array(this.dimension);
-      }
       if(this.dimension == MAX_DIM){
         this.biggerButton.html("Bigger field: MAXED");
         this.biggerButton.prop("disabled", true);
@@ -317,9 +314,50 @@ class Field{
         this.fruitButton.prop("disabled", true);
         this.buttonsHandler.addDisabledButton(this.fruitButton, mfCost);
       }
-      this.initialize();
+      this.upgradeGrid();
       this.drawCanvas();
     }
+  }
+
+  upgradeGrid(){
+    var newGrid = [];
+    for(var i = 0; i < this.dimension; i++){
+      newGrid[i] = [];
+    }
+    for(var i = 0; i < this.dimension; i++){
+      for(var j = 0; j < this.dimension; j++){
+        if( (i == 0) ||
+            (i == this.dimension - 1) ||
+            (j == 0) ||
+            (j == this.dimension - 1)
+          ){
+            newGrid[i][j] = State.FREE;
+          }else{
+            newGrid[i][j] = this.grid[i - 1][j - 1];
+          }
+      }
+    }
+    this.grid = newGrid;
+    for(var i = 0; i < this.snake.length; i++){
+      this.snake[i][0]++;
+      this.snake[i][1]++;
+    }
+    this.updateSnakeGrid();
+    while(this.activeFruits() < this.fruitNumber){
+      this.spawnFruit();
+    }
+  }
+
+  activeFruits(){
+    var count = 0;
+    for(var i = 0; i < this.dimension; i++){
+      for(var j = 0; j < this.dimension; j++){
+        if(this.grid[i][j] == State.FRUIT){
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   death(){
