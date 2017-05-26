@@ -183,8 +183,10 @@ class Game{
   }
 
   clearSave(){
-    localStorage.clear();
-    location.reload();
+    if(confirm("Are you sure you want to delete your save? (all progress will be lost!)")){
+      localStorage.clear();
+      location.reload();
+    }
   }
 
   updateUI(){

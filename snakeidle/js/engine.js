@@ -95,4 +95,7 @@ $( document ).ready(function() {
          game.save();
      }, 10000);
 
+     setInterval(function(){
+         $(document).prop('title', "Snake Idle: " + numberformat.format(game.fruits, {format: notation}));
+    }, 1000);
 });
