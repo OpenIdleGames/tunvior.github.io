@@ -176,6 +176,15 @@ class Game{
     this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
   }
 
+  updateUI(){
+    this.fruitsSpan.html(numberformat.format(this.fruits,{format: notation}));
+    this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
+    this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
+    this.snakeLengthBonusSpan.html(numberformat.format(this.snakeLengthBonus, {format: notation}));
+    var nextFieldCost = this.calculateNextFieldCost();
+    $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
+  }
+
   cycle(){
     for(var i = 0; i < this.fields.length; i++){
       this.fields[i].cycle();
@@ -218,6 +227,7 @@ class Game{
         upgrades: upgradesArray,
     };
     localStorage.setItem("save",JSON.stringify(save));
+    return JSON.stringify(save);
   }
 
   clearSave(){
@@ -227,13 +237,73 @@ class Game{
     }
   }
 
-  updateUI(){
-    this.fruitsSpan.html(numberformat.format(this.fruits,{format: notation}));
-    this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
-    this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
-    this.snakeLengthBonusSpan.html(numberformat.format(this.snakeLengthBonus, {format: notation}));
-    var nextFieldCost = this.calculateNextFieldCost();
-    $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
+  load(){
+    var savedNotation = JSON.parse(localStorage.getItem("notation"));
+    if((savedNotation !== null) && (typeof savedNotation !== "undefined")){
+        notation = savedNotation;
+        $("#notation").val(notation);
+    }
+    var save = JSON.parse(localStorage.getItem("save"));
+    if (save !== null){
+        if (typeof save.gameFruits !== "undefined")this.fruits = save.gameFruits;
+        if (typeof save.tickDuration !== "undefined")this.tickDuration = save.tickDuration;
+        if (typeof save.multiplier !== "undefined")this.multiplier = save.multiplier;
+        if (typeof save.snakeLengthBonus !== "undefined")this.snakeLengthBonus = save.snakeLengthBonus;
+        if (typeof save.lastProg !== "undefined")this.prog = save.lastProg;
+        if (typeof save.fields !== "undefined"){
+          for(var i = 0; i < this.fields.length; i++){
+              this.eraseField(i);
+          }
+          this.fields = [];
+          for(var i = 0; i < save.fields.length; i++){
+              this.fields.push(new Field(this, save.fields[i].prog, this.buttonsHandler));
+              this.fields[i].dimension = save.fields[i].dimension;
+              this.fields[i].fruitNumber = save.fields[i].fruitNumber;
+              this.fields[i].recreateGrid();
+              this.fields[i].initialize();
+              this.drawField(save.fields[i].prog);
+              this.fields[i].updateButtons();
+          }
+          this.updateFieldButton();
+        }
+        if (typeof save.upgrades !== "undefined"){
+          this.eraseUpgrades();
+          this.upgrades = [];
+          for(var i = 0; i < save.upgrades.length; i++){
+            this.upgrades.push(new Upgrade(
+              this,
+              this.upgrades.length,
+              save.upgrades[i].name,
+              save.upgrades[i].description,
+              save.upgrades[i].effect,
+              save.upgrades[i].startingPrice,
+              save.upgrades[i].ratio
+            ));
+            this.upgrades[i].level = save.upgrades[i].level;
+            this.drawUpgrade(this.upgrades[i], i);
+          }
+        }
+        this.updateUI();
+    }
   }
 
+  export(){
+    var save = this.save();
+    var string = btoa(save);
+    $("#exportTextarea").val(string);
+  }
+
+  import(){
+    var string = $("#exportTextarea").val();
+    try{
+      string = atob(string);
+      var save = JSON.parse(string);
+      localStorage.setItem("save",string);
+      this.load();
+    }
+    catch(e){
+      $("#exportTextarea").val("Save not valid");
+    }
+
+  }
 }

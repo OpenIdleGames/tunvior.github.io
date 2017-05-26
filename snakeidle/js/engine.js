@@ -1,51 +1,7 @@
-
 $( document ).ready(function() {
-    var savedNotation = JSON.parse(localStorage.getItem("notation"));
-    if((savedNotation !== null) && (typeof savedNotation !== "undefined")){
-        notation = savedNotation;
-        $("#notation").val(notation);
-    }
-    var save = JSON.parse(localStorage.getItem("save"));
     var game = new Game();
-    if (save !== null){
-        if (typeof save.gameFruits !== "undefined")game.fruits = save.gameFruits;
-        if (typeof save.tickDuration !== "undefined")game.tickDuration = save.tickDuration;
-        if (typeof save.multiplier !== "undefined")game.multiplier = save.multiplier;
-        if (typeof save.snakeLengthBonus !== "undefined")game.snakeLengthBonus = save.snakeLengthBonus;
-        if (typeof save.lastProg !== "undefined")game.prog = save.lastProg;
-        if (typeof save.fields !== "undefined"){
-          game.eraseField(0);
-          game.fields = [];
-          for(var i = 0; i < save.fields.length; i++){
-              game.fields.push(new Field(game, save.fields[i].prog, game.buttonsHandler));
-              game.fields[i].dimension = save.fields[i].dimension;
-              game.fields[i].fruitNumber = save.fields[i].fruitNumber;
-              game.fields[i].recreateGrid();
-              game.fields[i].initialize();
-              game.drawField(save.fields[i].prog);
-              game.fields[i].updateButtons();
-          }
-          game.updateFieldButton();
-        }
-        if (typeof save.upgrades !== "undefined"){
-          game.eraseUpgrades();
-          game.upgrades = [];
-          for(var i = 0; i < save.upgrades.length; i++){
-            game.upgrades.push(new Upgrade(
-              game,
-              game.upgrades.length,
-              save.upgrades[i].name,
-              save.upgrades[i].description,
-              save.upgrades[i].effect,
-              save.upgrades[i].startingPrice,
-              save.upgrades[i].ratio
-            ));
-            game.upgrades[i].level = save.upgrades[i].level;
-            game.drawUpgrade(game.upgrades[i], i);
-          }
-        }
-        game.updateUI();
-    }
+    game.load();
+
     $( "#addField" ).click(function(){
         game.addField();
     });
@@ -54,6 +10,12 @@ $( document ).ready(function() {
     });
     $( "#clearSave").click(function(){
         game.clearSave();
+    });
+    $( "#exportButton").click(function(){
+      game.export();
+    });
+    $( "#importButton").click(function(){
+      game.import();
     });
     $('#snakes a').click(function (e) {
       e.preventDefault()
