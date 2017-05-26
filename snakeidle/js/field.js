@@ -290,6 +290,7 @@ class Field{
   increaseDimension(){
     var bfCost = this.calculateBiggerFieldCost();
     if(bfCost <= this.game.fruits){
+      this.buttonsHandler.removeEnabledButton(this.biggerButton);
       this.game.removeFruits(bfCost);
       this.dimension = this.dimension + 2;
       bfCost = this.calculateBiggerFieldCost();
