@@ -1,5 +1,7 @@
+var game;
+
 $( document ).ready(function() {
-    var game = new Game();
+    game = new Game();
     game.load();
 
     $( "#addField" ).click(function(){

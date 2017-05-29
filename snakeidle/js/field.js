@@ -18,6 +18,7 @@ class Field{
     }
     this.snake = [];
     this.direction = Math.floor(Math.random() * 4);
+    this.manualControl = false;
   }
 
   setUIElements(){
@@ -41,7 +42,7 @@ class Field{
     this.fruitButton.html("More fruits: " + numberformat.format(mfCost, {format: notation}) + " fruits");
     this.biggerButton.html( "Bigger field: " + numberformat.format(bfCost, {format: notation}) + " fruits");
 
-    if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+    if(this.fruitNumber >= (this.dimension + (this.dimension - 3) / 2 - 1)){
       if(this.dimension < MAX_DIM){
         this.fruitButton.html("More fruits: Need bigger field");
         this.fruitButton.prop("disabled", true);
@@ -70,6 +71,83 @@ class Field{
         this.buttonsHandler.addDisabledButton(this.biggerButton, bfCost);
       }
     }
+
+    var interval;
+    var idle;
+
+    this.canvas.focusin(function(){
+      field.manualControl = true;
+      idle =  setTimeout(function(){
+          field.canvas.focusout();
+          field.canvas.blur();
+      }, 15000);
+      interval = setInterval(function(){
+        var destination = [];
+        switch (field.direction) {
+          case Direction.UP:
+            destination = [field.snake[0][0] - 1, field.snake[0][1]];
+            break;
+          case Direction.DOWN:
+            destination = [field.snake[0][0] + 1, field.snake[0][1]];
+            break;
+          case Direction.LEFT:
+            destination = [field.snake[0][0], field.snake[0][1] - 1];
+            break;
+          case Direction.RIGHT:
+            destination = [field.snake[0][0], field.snake[0][1] + 1];
+            break;
+        }
+        if( field.isOutOfBound(destination) ||
+            (field.grid[destination[0]][destination[1]] == State.SNAKE) ){
+              field.death();
+        }else{
+          if(field.grid[destination[0]][destination[1]] == State.FRUIT){
+            field.game.addFruits(field.snake.length);
+            field.moveSnake(destination, true);
+          }else{
+            field.moveSnake(destination, false);
+          }
+        }
+        field.drawCanvas();
+
+      }, game.tickDuration);
+      field.canvas.keydown(function(event){
+        clearTimeout(idle);
+        switch (event.which) {
+          case 37:
+            event.preventDefault();
+          case 65://a
+            field.direction = Direction.UP;
+            break;
+          case 38:
+            event.preventDefault();
+          case 87://w
+            field.direction = Direction.LEFT;
+            break;
+          case 40:
+            event.preventDefault();
+          case 83://s
+            field.direction = Direction.RIGHT;
+            break;
+          case 39:
+            event.preventDefault();
+          case 68://d
+            field.direction = Direction.DOWN;
+            break;
+          }
+          idle =  setTimeout(function(){
+              field.canvas.focusout();
+              field.canvas.blur();
+          }, 15000);
+      });
+
+    });
+    this.canvas.focusout(function(){
+      field.manualControl = false;
+      field.canvas.unbind("keydown");
+      clearInterval(interval);
+      clearTimeout(idle);
+    });
 
     this.initialize();
   }
@@ -264,7 +342,8 @@ class Field{
       this.fruitNumber++;
       mfCost = this.calculateMoreFruitsCost();
       this.fruitButton.html("More fruits: " + numberformat.format(mfCost, {format: notation}) + " fruits");
-      if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+      //if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+      if(this.fruitNumber >= (this.dimension + (this.dimension - 3) / 2 - 1)){
         if(this.dimension < MAX_DIM){
           this.fruitButton.html("More fruits: Need bigger field");
           this.fruitButton.prop("disabled", true);
@@ -424,6 +503,7 @@ class Field{
               [i, j - 1, Direction.LEFT],
               [i, j + 1, Direction.RIGHT]
             ];
+
             var badIndexes = [];
             for(var k = 0; k < possibleDirections.length; k++){//removing direction where there is a wall or snake
               var x = possibleDirections[k][0];
@@ -473,12 +553,14 @@ class Field{
     }
 
     var index = Math.floor(Math.random() * fruitCoords.length);
-    var target = fruitCoords[index];
+    var target = fruitCoords[0];
     var nextDirections = directions[target[0]][target[1]];//contains the list of direction that reach the fruit
     var chosenDirection = null; //will contain the chosen direction
     while(nextDirections.length > 0){
+
       index = Math.floor(Math.random() * nextDirections.length); //picking a random direction between possible
       chosenDirection = nextDirections[index];
+
       switch (chosenDirection) {
         case Direction.UP:
           target = [target[0] + 1, target[1]];
@@ -557,7 +639,8 @@ class Field{
       this.biggerButton.html("Bigger field: " + numberformat.format(this.calculateBiggerFieldCost(), {format: notation}) + " fruits");
     }
     this.fruitButton.html("More fruits: " + numberformat.format(this.calculateMoreFruitsCost(), {format: notation}) + " fruits");
-    if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+    //if(this.fruitNumber > Math.ceil(this.dimension * this.dimension * 0.1)){
+    if(this.fruitNumber >= (this.dimension + (this.dimension - 3) / 2 - 1)){
       if(this.dimension < MAX_DIM){
         this.fruitButton.prop("disabled", true);
         this.fruitButton.html("More fruits: Need bigger field");

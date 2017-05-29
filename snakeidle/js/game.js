@@ -7,6 +7,7 @@ class Game{
     this.fruits = 0;
     this.tickDuration = 1000;
     this.multiplier = 1;
+    this.fruitValue = 1;
     this.snakeLengthBonus = 0;
     this.prog = 0;
     this.fields = [];
@@ -31,7 +32,7 @@ class Game{
       this.upgrades.length,
       "Fruit value",
       "Double the value of fruits",
-      "this.game.multiplier = this.game.multiplier * 2",
+      "this.game.fruitValue = this.game.fruitValue * 2",
       1000,
       10
     ));
@@ -71,7 +72,7 @@ class Game{
     var fruitButton = $("<button class=\"btn btn-primary\" id=\"fruitButton" + i +  "\">More fruits</button>");
     var biggerButton = $("<button class=\"btn btn-primary\" id=\"biggerButton" + i +  "\">Bigger field</button>");
     var prestigeButton = $("<button class=\"btn btn-success\" id=\"prestigeButton" + i +  "\">PRESTIGE</button>");
-    var canvas = $("<canvas id=\"canvas" + i + "\" width=" + MAX_DIM*DRAWING_UNIT + " height=" + MAX_DIM*DRAWING_UNIT + "></canvas>");
+    var canvas = $("<canvas id=\"canvas" + i + "\" width=" + MAX_DIM*DRAWING_UNIT + " height=" + MAX_DIM*DRAWING_UNIT + " tabindex=\"0  \"></canvas>");
 
     col.append(fruitButton);
     col.append(biggerButton);
@@ -112,7 +113,7 @@ class Game{
   eraseField(index){
     this.buttonsHandler.deleteButton(this.fields[index].fruitButton);
     this.buttonsHandler.deleteButton(this.fields[index].biggerButton);
-    $("#field"+index).remove();
+    $("#field"+this.fields[index].prog).remove();
   }
 
   eraseUpgrades(){
@@ -148,7 +149,7 @@ class Game{
 
   addFruits(snakeLength){
     var value = (snakeLength - 1) * this.snakeLengthBonus;
-    this.fruits = this.fruits + ((1 + value) * this.multiplier);
+    this.fruits = this.fruits + ((1 + value) * this.fruitValue * this.multiplier);
     this.fruitsSpan.html(numberformat.format(this.fruits, {format: notation}));
     this.buttonsHandler.fruitUp(this.fruits);
   }
@@ -166,12 +167,10 @@ class Game{
         index = i;
       }
     }
-    this.buttonsHandler.deleteButton(this.fields[index].fruitButton);
-    this.buttonsHandler.deleteButton(this.fields[index].biggerButton);
-    this.fields.splice(index, 1);
     this.multiplier *= 2;
     this.tickDuration *= 0.85;
-    this.eraseField(prog);
+    this.eraseField(index);
+    this.fields.splice(index, 1);
     this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
     this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
   }
@@ -187,13 +186,18 @@ class Game{
 
   cycle(){
     for(var i = 0; i < this.fields.length; i++){
-      this.fields[i].cycle();
+      if(!this.fields[i].manualControl){
+          this.fields[i].cycle();
+      }
+
     }
   }
 
   cycleNoGraphic(){
     for(var i = 0; i < this.fields.length; i++){
-      this.fields[i].cycleNoGraphic();
+      if(!this.fields[i].manualControl){
+          this.fields[i].cycleNoGraphic();
+      }
     }
   }
 
@@ -209,11 +213,6 @@ class Game{
     var upgradesArray = [];
     for(var i = 0; i < this.upgrades.length; i++){
       upgradesArray.push({
-        name: this.upgrades[i].name,
-        description: this.upgrades[i].description,
-        effect: this.upgrades[i].effect,
-        startingPrice: this.upgrades[i].startingPrice,
-        ratio: this.upgrades[i].ratio,
         level: this.upgrades[i].level,
       });
     }
@@ -221,6 +220,7 @@ class Game{
         gameFruits: this.fruits,
         tickDuration: this.tickDuration,
         multiplier: this.multiplier,
+        fruitValue: this.fruitValue,
         snakeLengthBonus: this.snakeLengthBonus,
         lastProg: this.prog,
         fields: fieldsArray,
@@ -248,6 +248,14 @@ class Game{
         if (typeof save.gameFruits !== "undefined")this.fruits = save.gameFruits;
         if (typeof save.tickDuration !== "undefined")this.tickDuration = save.tickDuration;
         if (typeof save.multiplier !== "undefined")this.multiplier = save.multiplier;
+        if (typeof save.fruitValue !== "undefined"){
+          this.fruitValue = save.fruitValue;
+        }else{
+          if (typeof save.upgrades !== "undefined"){
+            this.fruitValue = Math.pow(2, save.upgrades[0].level);
+            this.multiplier = this.multiplier / this.fruitValue;
+          }
+        }
         if (typeof save.snakeLengthBonus !== "undefined")this.snakeLengthBonus = save.snakeLengthBonus;
         if (typeof save.lastProg !== "undefined")this.prog = save.lastProg;
         if (typeof save.fields !== "undefined"){
@@ -268,17 +276,7 @@ class Game{
         }
         if (typeof save.upgrades !== "undefined"){
           this.eraseUpgrades();
-          this.upgrades = [];
           for(var i = 0; i < save.upgrades.length; i++){
-            this.upgrades.push(new Upgrade(
-              this,
-              this.upgrades.length,
-              save.upgrades[i].name,
-              save.upgrades[i].description,
-              save.upgrades[i].effect,
-              save.upgrades[i].startingPrice,
-              save.upgrades[i].ratio
-            ));
             this.upgrades[i].level = save.upgrades[i].level;
             this.drawUpgrade(this.upgrades[i], i);
           }
@@ -299,7 +297,7 @@ class Game{
       string = atob(string);
       var save = JSON.parse(string);
       localStorage.setItem("save",string);
-      this.load();
+      location.reload();
     }
     catch(e){
       $("#exportTextarea").val("Save not valid");

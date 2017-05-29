@@ -21,6 +21,12 @@ h1 {
   text-align: center;
 }
 
+.navbar-title{
+  padding-top: 10px;
+  font-size: 18px;
+  color: white;
+}
+
 .nav-tabs > li, .nav-pills > li {
     float:none;
     display:inline-block;
@@ -30,10 +36,4 @@ h1 {
 
 .nav-tabs, .nav-pills {
     text-align:center;
-}
-
-.fruitNav{
-  padding-top: 15px;
-  font-size: 25px;
-  color: white;
 }
