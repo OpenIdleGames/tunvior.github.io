@@ -9,6 +9,8 @@ class Game{
     this.multiplier = 1;
     this.fruitValue = 1;
     this.snakeLengthBonus = 0;
+    this.goldenFruitChance = 0;
+    this.goldenFruitValue = 2;
     this.prog = 0;
     this.fields = [];
     this.fields.push(new Field(this, this.prog, this.buttonsHandler));
@@ -17,6 +19,9 @@ class Game{
     this.tickDurationSpan = $("#tickDuration");
     this.multiplierSpan = $("#multiplier");
     this.snakeLengthBonusSpan = $("#snakeLengthBonus");
+    this.fruitValueSpan = $("#fruitValue");
+    this.goldenFruitChanceSpan = $("#goldenFruitChance");
+    this.goldenFruitValueSpan = $("#goldenFruitValue");
     this.drawField(this.prog - 1);
     var nextFieldCost = this.calculateNextFieldCost();
     $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
@@ -42,7 +47,25 @@ class Game{
       "Snake length bonus",
       "Increase the bonus from snake length",
       "this.game.snakeLengthBonus = this.game.snakeLengthBonus + 1",
-      100,
+      10,
+      100
+    ));
+    this.upgrades.push(new Upgrade(
+      this,
+      this.upgrades.length,
+      "Golden fruit chance",
+      "Increase the chance for golden fruit spawn",
+      "this.game.goldenFruitChance = this.game.goldenFruitChance + 10",
+      1000,
+      1000
+    ));
+    this.upgrades.push(new Upgrade(
+      this,
+      this.upgrades.length,
+      "Golden fruit value",
+      "Increase the value for golden fruits",
+      "this.game.goldenFruitValue = this.game.goldenFruitValue + 1",
+      100000,
       100
     ));
     for(var i = 0; i < this.upgrades.length; i++){
@@ -116,8 +139,9 @@ class Game{
     $("#field"+this.fields[index].prog).remove();
   }
 
-  eraseUpgrades(){
-    $("#upgradeList").empty();
+  eraseUpgrade(index){
+    this.buttonsHandler.deleteButton(this.upgrades[index].buyButton);
+    $("#upgrade"+index).remove();
   }
 
   calculateNextFieldCost(){
@@ -147,9 +171,14 @@ class Game{
 
 
 
-  addFruits(snakeLength){
+  addFruits(snakeLength, goldenFruit){
     var value = (snakeLength - 1) * this.snakeLengthBonus;
-    this.fruits = this.fruits + ((1 + value) * this.fruitValue * this.multiplier);
+    if(goldenFruit){
+        this.fruits = this.fruits + ((1 + value) * this.fruitValue * this.goldenFruitValue * this.multiplier);
+    }else{
+        this.fruits = this.fruits + ((1 + value) * this.fruitValue * this.multiplier);
+    }
+
     this.fruitsSpan.html(numberformat.format(this.fruits, {format: notation}));
     this.buttonsHandler.fruitUp(this.fruits);
   }
@@ -179,7 +208,10 @@ class Game{
     this.fruitsSpan.html(numberformat.format(this.fruits,{format: notation}));
     this.multiplierSpan.html(numberformat.format(this.multiplier, {format: notation}));
     this.tickDurationSpan.html(numberformat.format(this.tickDuration, {format: notation}));
+    this.fruitValueSpan.html(numberformat.format(this.fruitValue, {format: notation}));
     this.snakeLengthBonusSpan.html(numberformat.format(this.snakeLengthBonus, {format: notation}));
+    this.goldenFruitChanceSpan.html(numberformat.format(this.goldenFruitChance, {format: notation}));
+    this.goldenFruitValueSpan.html(numberformat.format(this.goldenFruitValue, {format: notation}));
     var nextFieldCost = this.calculateNextFieldCost();
     $("#addField").html("Add field: " + numberformat.format(nextFieldCost, {format: notation}) + " fruits");
   }
@@ -222,6 +254,8 @@ class Game{
         multiplier: this.multiplier,
         fruitValue: this.fruitValue,
         snakeLengthBonus: this.snakeLengthBonus,
+        goldenFruitChance: this.goldenFruitChance,
+        goldenFruitValue: this.goldenFruitValue,
         lastProg: this.prog,
         fields: fieldsArray,
         upgrades: upgradesArray,
@@ -257,6 +291,8 @@ class Game{
           }
         }
         if (typeof save.snakeLengthBonus !== "undefined")this.snakeLengthBonus = save.snakeLengthBonus;
+        if (typeof save.goldenFruitChance !== "undefined")this.goldenFruitChance = save.goldenFruitChance;
+        if (typeof save.goldenFruitValue !== "undefined")this.goldenFruitValue = save.goldenFruitValue;
         if (typeof save.lastProg !== "undefined")this.prog = save.lastProg;
         if (typeof save.fields !== "undefined"){
           for(var i = 0; i < this.fields.length; i++){
@@ -275,8 +311,8 @@ class Game{
           this.updateFieldButton();
         }
         if (typeof save.upgrades !== "undefined"){
-          this.eraseUpgrades();
           for(var i = 0; i < save.upgrades.length; i++){
+            this.eraseUpgrade(i);
             this.upgrades[i].level = save.upgrades[i].level;
             this.drawUpgrade(this.upgrades[i], i);
           }

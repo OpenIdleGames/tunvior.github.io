@@ -102,7 +102,10 @@ class Field{
               field.death();
         }else{
           if(field.grid[destination[0]][destination[1]] == State.FRUIT){
-            field.game.addFruits(field.snake.length);
+            field.game.addFruits(field.snake.length, false);
+            field.moveSnake(destination, true);
+          }else if(field.grid[destination[0]][destination[1]] == State.GOLDEN_FRUIT){
+            field.game.addFruits(field.snake.length, true);
             field.moveSnake(destination, true);
           }else{
             field.moveSnake(destination, false);
@@ -218,7 +221,13 @@ class Field{
     }else{
       var index = Math.floor(Math.random() * freeCells.length);
       var coords = freeCells[index];
-      this.grid[coords[0]][coords[1]] = State.FRUIT;
+      var gold = Math.floor(Math.random() * 100);
+      if (this.game.goldenFruitChance > gold){
+          this.grid[coords[0]][coords[1]] = State.GOLDEN_FRUIT;
+      }else{
+          this.grid[coords[0]][coords[1]] = State.FRUIT;
+      }
+
     }
 
   }
@@ -237,7 +246,12 @@ class Field{
           ctx.beginPath();
           ctx.arc((offset+i)*DRAWING_UNIT+DRAWING_UNIT/2, (offset+j)*DRAWING_UNIT+DRAWING_UNIT/2, DRAWING_UNIT/2, 0, 2 * Math.PI, false);
           ctx.fill();
-          //ctx.fillRect((offset+i)*DRAWING_UNIT, (offset+j)*DRAWING_UNIT, DRAWING_UNIT, DRAWING_UNIT);
+        }
+        if(this.grid[i][j] == State.GOLDEN_FRUIT){
+          ctx.fillStyle = 'gold';
+          ctx.beginPath();
+          ctx.arc((offset+i)*DRAWING_UNIT+DRAWING_UNIT/2, (offset+j)*DRAWING_UNIT+DRAWING_UNIT/2, DRAWING_UNIT/2, 0, 2 * Math.PI, false);
+          ctx.fill();
         }
         if(this.grid[i][j] == State.SNAKE){
           ctx.fillStyle = 'green';
@@ -432,7 +446,9 @@ class Field{
     var count = 0;
     for(var i = 0; i < this.dimension; i++){
       for(var j = 0; j < this.dimension; j++){
-        if(this.grid[i][j] == State.FRUIT){
+        if( (this.grid[i][j] == State.FRUIT) ||
+            (this.grid[i][j] == State.GOLDEN_FRUIT)
+        ){
           count++;
         }
       }
@@ -536,7 +552,9 @@ class Field{
               for(var k = 0; k < possibleDirections.length; k++){//looking for fruit
                 var x = possibleDirections[k][0];
                 var y = possibleDirections[k][1];
-                if(this.grid[x][y] == State.FRUIT){
+                if( (this.grid[x][y] == State.FRUIT) ||
+                    (this.grid[x][y] == State.GOLDEN_FRUIT)
+                  ){
                   fruitFound = true;
                   fruitCoords.push(possibleDirections[k]);
                 }
@@ -596,8 +614,13 @@ class Field{
     }
     this.direction = chosenDirection;
     if(distance === 1){
-      this.game.addFruits(this.snake.length);
-      this.moveSnake(coords, true);
+      if(this.grid[coords[0]][coords[1]] == State.FRUIT){
+        this.game.addFruits(this.snake.length, false);
+        this.moveSnake(coords, true);
+      }else{
+        this.game.addFruits(this.snake.length, true);
+        this.moveSnake(coords, true);
+      }
     }else{
       this.moveSnake(coords, false);
     }

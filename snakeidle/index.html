@@ -47,21 +47,37 @@
 
       </div> <!-- end navbar -->
 
-      <div id="scoreboard" > <!-- scoreboard and options menu -->
-        <div class="row">
-
-          <div class="col-md-4">
-              Tick duration: <span id="tickDuration">1000</span> ms
+      <div class="panel panel-default">
+          <div class="panel-heading" role="tab">
+            <h5 class="panel-title multipliers-title">
+              <a role="button" data-toggle="collapse" href="#multipliers" aria-expanded="true" aria-controls="scores">
+                Multipliers
+              </a>
+            </h5>
           </div>
-          <div class="col-md-4">
-              Multiplier: <span id="multiplier">1</span>
-          </div>
-          <div class="col-md-4">
-              Snake length bonus: <span id="snakeLengthBonus">0</span>
+          <div id="multipliers" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="row">
+              <div class="col-sm-6 col-md-4">
+                  Tick duration: <span id="tickDuration">1000</span> ms
+              </div>
+              <div class="col-sm-6 col-md-4">
+                  Multiplier: x<span id="multiplier">1</span>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                Fruit value: x<span id="fruitValue">1</span>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                  Snake length bonus: +<span id="snakeLengthBonus">0</span>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                Golden fruit chance: <span id="goldenFruitChance">0</span>%
+              </div>
+              <div class="col-sm-6 col-md-4">
+                Golden fruit value: x<span id="goldenFruitValue">2</span>
+              </div>
+            </div>
           </div>
         </div>
-
-      </div> <!-- end scoreboard -->
 
       <div>
         <ul class="nav nav-tabs" role="tablist">
@@ -120,6 +136,9 @@
             <div id="changelog">
               <h3>CHANGELOG</h3>
               <ul>
+                <li>
+                  29/05 - 17:00 CET: Added new fruit. Changed UI for multipliers. Lowered starting price for snake length bonus.
+                </li>
                 <li>
                   29/05 - 12:30 CET: Changed relation between max number of fruits and dimension, now should be easier to prestige. Added manual control for snakes, it activate when click on a field and deactivate when click away or after 15 seconds. While active you can control the snake with W/A/S/D or arrow keys. Fixed some bugs.
                 </li>
