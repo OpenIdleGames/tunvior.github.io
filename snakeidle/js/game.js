@@ -263,12 +263,14 @@ class Game{
     var dt = (now - lastTimestamp);
     var ticks = Math.floor(dt / game.tickDuration);
     var fruitsEarned = this.heuristic(ticks);
-    var alert = "<div class=\"alert alert-info alert-dismissible\">";
-    alert += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">";
-    alert += "<span aria-hidden=\"true\">&times;</span></button>";
-    alert += "While you were offline you earned " + numberformat.format(fruitsEarned, {format: notation}) + " fruits";
-    alert += "</div>";
-    $("#snakes").prepend(alert);
+    if(fruitsEarned > 0){
+      var alert = "<div class=\"alert alert-info alert-dismissible\">";
+      alert += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">";
+      alert += "<span aria-hidden=\"true\">&times;</span></button>";
+      alert += "While you were offline you earned " + numberformat.format(fruitsEarned, {format: notation}) + " fruits";
+      alert += "</div>";
+      $("#snakes").prepend(alert);
+    }
   }
 
   save(){
