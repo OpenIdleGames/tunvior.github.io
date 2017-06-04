@@ -1,5 +1,5 @@
 class Upgrade{
-  constructor(game, prog, name, description, effect, startingPrice, ratio){
+  constructor(game, prog, name, description, effect, startingPrice, ratio, maxLevel){
     this.game = game;
     this.prog = prog;
     this.name = name;
@@ -7,6 +7,7 @@ class Upgrade{
     this.effect = effect;
     this.startingPrice = startingPrice;
     this.ratio = ratio;
+    this.maxLevel = maxLevel;
     this.level = 0;
     //UI elements
     this.nameSpan = null;
@@ -46,8 +47,13 @@ class Upgrade{
       this.game.removeFruits(this.calculateCost());
       this.level++;
       eval(this.effect);
-      this.updateUI();
-      this.game.updateUI();
+      if(this.level >= this.maxLevel){
+        this.game.eraseUpgrade(this.prog);
+        this.game.updateUI();
+      }else{
+        this.updateUI();
+        this.game.updateUI();
+      }
     }
   }
 }

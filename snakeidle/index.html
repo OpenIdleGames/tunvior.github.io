@@ -125,17 +125,31 @@
             <br />
             <div>
               <h3>OTHER OPTIONS</h3>
-                Number notation:
-                <select id="notation">
-                  <option value="standard">Standard</option>
-                  <option value="scientific">Scientific</option>
-                  <option value="engineering">Engineering</option>
-                </select>
+                <div>
+                    Number notation:
+                    <select id="notation">
+                      <option value="standard">Standard</option>
+                      <option value="scientific">Scientific</option>
+                      <option value="engineering">Engineering</option>
+                    </select>
+              </div>
+              <div >
+                  Use heuristic for calculations:
+                  <input type="checkbox" id="heuristic" checked/>
+              </div>
+              <div>
+                  Offline progress:
+                  <input type="checkbox" id="offline" checked/>
+              </div>
+
             </div>
             <br /><br />
             <div id="changelog">
               <h3>CHANGELOG</h3>
               <ul>
+                <li>
+                  04/06 - 12:00 CET: Now snakes go for golden fruit if at same distance as other fruit. Added heuristic to calculate gain when game if out of focus for more than 1000 ticks (toggleable in options).  Added offline progress using same heuristic (toggleable in options). Added max level for upgrades.
+                </li>
                 <li>
                   29/05 - 17:00 CET: Added new fruit. Changed UI for multipliers. Lowered starting price for snake length bonus.
                 </li>

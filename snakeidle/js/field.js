@@ -569,9 +569,23 @@ class Field{
     if(!pathAvaiable){
       return this.death();
     }
+    var goldenFruitCoords = [];
+    for(var i = 0; i < fruitCoords.length; i++){
+      if(this.grid[fruitCoords[i][0]][fruitCoords[i][1]] == State.GOLDEN_FRUIT){
+        goldenFruitCoords.push(fruitCoords[i]);
+      }
+    }
+    var index;
+    var target;
 
-    var index = Math.floor(Math.random() * fruitCoords.length);
-    var target = fruitCoords[0];
+    if(goldenFruitCoords.length > 0){
+      index = Math.floor(Math.random() * goldenFruitCoords.length);
+      target = goldenFruitCoords[0];
+    }else{
+      index = Math.floor(Math.random() * fruitCoords.length);
+      target = fruitCoords[0];
+    }
+
     var nextDirections = directions[target[0]][target[1]];//contains the list of direction that reach the fruit
     var chosenDirection = null; //will contain the chosen direction
     while(nextDirections.length > 0){

@@ -1,4 +1,6 @@
 var notation = 'standard';
+var heuristic = true;
+var offline = true;
 
 class Game{
 
@@ -39,7 +41,8 @@ class Game{
       "Double the value of fruits",
       "this.game.fruitValue = this.game.fruitValue * 2",
       1000,
-      10
+      10,
+      100
     ));
     this.upgrades.push(new Upgrade(
       this,
@@ -48,6 +51,7 @@ class Game{
       "Increase the bonus from snake length",
       "this.game.snakeLengthBonus = this.game.snakeLengthBonus + 1",
       10,
+      100,
       100
     ));
     this.upgrades.push(new Upgrade(
@@ -57,7 +61,8 @@ class Game{
       "Increase the chance for golden fruit spawn",
       "this.game.goldenFruitChance = this.game.goldenFruitChance + 10",
       1000,
-      1000
+      1000,
+      10
     ));
     this.upgrades.push(new Upgrade(
       this,
@@ -66,6 +71,7 @@ class Game{
       "Increase the value for golden fruits",
       "this.game.goldenFruitValue = this.game.goldenFruitValue + 1",
       100000,
+      100,
       100
     ));
     for(var i = 0; i < this.upgrades.length; i++){
@@ -108,6 +114,9 @@ class Game{
   }
 
   drawUpgrade(upgrade, prog){
+    if(upgrade.level >= upgrade.maxLevel){
+      return;
+    }
     var row = $("#upgradeList");
     var col = $("<div class=\"col-md-6\" id=\"upgrade" + prog + "\"></div>");
 
@@ -221,7 +230,6 @@ class Game{
       if(!this.fields[i].manualControl){
           this.fields[i].cycle();
       }
-
     }
   }
 
@@ -231,6 +239,36 @@ class Game{
           this.fields[i].cycleNoGraphic();
       }
     }
+  }
+
+  heuristic(ticks){
+    var fruitsEarned = 0;
+    for(var i = 0; i < this.fields.length; i++){
+      var average = this.fields[i].dimension;
+      var chance = this.fields[i].fruitNumber * 1.0 / (this.fields[i].dimension * this.fields[i].dimension);
+      var gain = (
+        ((average - 1) * this.snakeLengthBonus + 1) * this.fruitValue * this. multiplier * (1 - this.goldenFruitChance * 1.0 / 100) +
+        ((average - 1) * this.snakeLengthBonus + 1) * this.fruitValue * this. multiplier * this.goldenFruitValue * this.goldenFruitChance * 1.0 / 100
+      ) * chance * ticks;
+      gain = Math.ceil(gain);
+      fruitsEarned += gain;
+    }
+    this.fruits += fruitsEarned;
+    this.updateUI();
+    return fruitsEarned;
+  }
+
+  offlineProgress(lastTimestamp){
+    var now = Date.now();
+    var dt = (now - lastTimestamp);
+    var ticks = Math.floor(dt / game.tickDuration);
+    var fruitsEarned = this.heuristic(ticks);
+    var alert = "<div class=\"alert alert-info alert-dismissible\">";
+    alert += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">";
+    alert += "<span aria-hidden=\"true\">&times;</span></button>";
+    alert += "While you were offline you earned " + numberformat.format(fruitsEarned, {format: notation}) + " fruits";
+    alert += "</div>";
+    $("#snakes").prepend(alert);
   }
 
   save(){
@@ -249,6 +287,7 @@ class Game{
       });
     }
     var save = {
+        timestamp: Date.now(),
         gameFruits: this.fruits,
         tickDuration: this.tickDuration,
         multiplier: this.multiplier,
@@ -272,13 +311,25 @@ class Game{
   }
 
   load(){
+    var lastTimestamp = Date.now();
     var savedNotation = JSON.parse(localStorage.getItem("notation"));
+    var savedHeuristic = JSON.parse(localStorage.getItem("heuristic"));
+    var savedOffline = JSON.parse(localStorage.getItem("offline"));
     if((savedNotation !== null) && (typeof savedNotation !== "undefined")){
         notation = savedNotation;
         $("#notation").val(notation);
     }
+    if((savedHeuristic !== null) && (typeof savedHeuristic !== "undefined")){
+        heuristic = savedHeuristic;
+        $("#heuristic").prop("checked", heuristic);
+    }
+    if((savedOffline !== null) && (typeof savedOffline !== "undefined")){
+        offline = savedOffline;
+        $("#offline").prop("checked", offline);
+    }
     var save = JSON.parse(localStorage.getItem("save"));
     if (save !== null){
+        if (typeof save.timestamp !== "undefined")lastTimestamp = save.timestamp;
         if (typeof save.gameFruits !== "undefined")this.fruits = save.gameFruits;
         if (typeof save.tickDuration !== "undefined")this.tickDuration = save.tickDuration;
         if (typeof save.multiplier !== "undefined")this.multiplier = save.multiplier;
@@ -319,6 +370,10 @@ class Game{
         }
         this.updateUI();
     }
+    if(offline){
+        this.offlineProgress(lastTimestamp);
+    }
+
   }
 
   export(){

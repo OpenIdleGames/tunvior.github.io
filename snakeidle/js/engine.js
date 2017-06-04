@@ -31,6 +31,14 @@ $( document ).ready(function() {
         notation = $("#notation option:selected").val();
         localStorage.setItem("notation",JSON.stringify(notation));
     });
+    $("#heuristic").change(function(){
+        heuristic = $("#heuristic").prop("checked");
+        localStorage.setItem("heuristic",JSON.stringify(heuristic));
+    });
+    $("#offline").change(function(){
+        offline = $("#offline").prop("checked");
+        localStorage.setItem("offline",JSON.stringify(offline));
+    });
     /*
     setInterval(function(){
         game.cycle();
@@ -41,6 +49,12 @@ $( document ).ready(function() {
          now = Date.now();
          dt = (now - last);
          var ticks = Math.floor(dt / game.tickDuration);
+
+         if((ticks > 1000) && heuristic){
+             game.heuristic(ticks - 1000);
+             ticks = 1000;
+         }
+
          var i = ticks;
          while(i > 0){
             if(ticks > 1){
