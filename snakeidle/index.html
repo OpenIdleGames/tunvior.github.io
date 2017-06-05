@@ -50,8 +50,8 @@
       <div class="panel panel-default">
           <div class="panel-heading" role="tab">
             <h5 class="panel-title multipliers-title">
-              <a role="button" data-toggle="collapse" href="#multipliers" aria-expanded="true" aria-controls="scores">
-                Multipliers
+              <a role="button" data-toggle="collapse" href="#multipliers" aria-expanded="true" aria-controls="scores" id="fruitSec">
+                0 fruits/sec
               </a>
             </h5>
           </div>
@@ -75,6 +75,15 @@
               <div class="col-sm-6 col-md-4">
                 Golden fruit value: x<span id="goldenFruitValue">2</span>
               </div>
+              <div class="col-sm-6 col-md-4">
+                Purple fruit chance: <span id="purpleFruitChance">0</span>%
+              </div>
+              <div class="col-sm-6 col-md-4">
+                Purple fruit duration: <span id="purpleFruitDuration">10</span> ticks
+              </div>
+              <div class="col-sm-6 col-md-4">
+                Purple fruit multiplier: x<span id="purpleFruitEffect">5</span>
+              </div>
             </div>
           </div>
         </div>
@@ -97,15 +106,19 @@
               <div id="snakeHeader">
                 <button class="btn btn-primary" id="addField">Add Field</button>
               </div>
+              <br />
               <div class="row"  id="grid">
 
               </div>
           </div>
           <div role="tabpanel" class="tab-pane" id="upgrades">
             <h1>UPGRADES</h1>
-            <div class="row" id="upgradeList">
+            <div class="container">
+              <div class="row" id="upgradeList">
 
+              </div>
             </div>
+
           </div>
           <div role="tabpanel" class="tab-pane" id="options">
             <h1>OPTIONS</h1>
@@ -147,6 +160,9 @@
             <div id="changelog">
               <h3>CHANGELOG</h3>
               <ul>
+                <li>
+                  05/06 - 15:00 CET: Buffed heuristic. Added offline time in alert. Fruits/sec indicator added. Lowered price ratio for some upgrades. Added purple fruits and relative upgrades. Code transpiled so it can run in old browsers(still testing)
+                </li>
                 <li>
                   04/06 - 12:00 CET: Now snakes go for golden fruit if at same distance as other fruit. Added heuristic to calculate gain when game if out of focus for more than 1000 ticks (toggleable in options).  Added offline progress using same heuristic (toggleable in options). Added max level for upgrades.
                 </li>
