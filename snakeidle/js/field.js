@@ -131,6 +131,9 @@ var Field = function () {
           if (field.purpleFruitTime > 0) {
             field.purpleFruitTime--;
           }
+          if (field.game.purpleFruitChance > 0) {
+            field.spawnPurpleFruit();
+          }
 
           field.drawCanvas();
         }, game.tickDuration);
